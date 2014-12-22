@@ -1,0 +1,203 @@
+\documentclass[a4paper]{article}
+
+\usepackage[english]{babel}
+\usepackage[utf8]{inputenc}
+\usepackage{amsmath,amssymb}
+\usepackage{graphicx}
+\usepackage[colorinlistoftodos]{todonotes}
+
+\title{ECE 358: Assignment 6}
+
+\author{Ariel Weingarten - 20366892 \\
+Alexander Maguire - 20396195}
+
+\date{\today}
+
+\newcommand{\arp}[5]{
+\begin{align*}
+\text{\textbf{#1:}} & \\
+\text{#2} &\to \text{#3} \\
+\text{#4:#4:#4:#4:#4:#4} &\to \text{#5:#5:#5:#5:#5:#5}
+\end{align*}
+}
+
+\begin{document}
+\maketitle
+
+% A TCP sender and receiver are connected via a dedicated high-bandwidth connection so there is never any congestion. Suppose the sender has 100 megabytes of application data ready to send, and the receiver has no application data to send. Compute the data efficiency to send this data from the sender to the receiver. Data efficiency is the ratio of the total number of bytes sent by the sender and receiver, to the amount of application data sent (which is 100 MB). Make the following assumptions.
+% The receiver advertises an MSS of 1000 bytes. It also initially advertises a window size of 100 kilobytes. The application at the receiver is able to read data at only 10 bytes per second. The RTT is 200 milliseconds, no segment is lost, every TCP header is 20 bytes, every IP header is 20 bytes, and the MSS is for application data only (i.e., does not include the TCP header). Ignore the overhead from headers below the IP layer, and from connection setup and teardown.
+\section{Question One}
+For each packet sent, there is 40 bytes of overhead. 20 bytes come from the TCP header and the other 20 bytes come from the IP header. The MSS is 1000 bytes and does not include headers. Therefore each data packet sent consists of 1040 bytes. For each successfully received packet, an ACK packet is sent back. All of the data required for an ACK is contained in the header, so each ACK packet is 40 bytes. \\ 
+It follows that for every 1000 bytes of application data sent there are 1080 bytes sent.
+\[
+	\mathit{D_{efficiency}} = \frac{1000}{1080} \approx 0.926
+\]
+
+% Look at RFC 2525, http://tools.ietf.org/html/rfc2525, Section 2.10, “Failure to back off retransmission timeout.” The relevant portion is paraphrased below.
+% Each time a segment is retransmitted, the timeout is doubled. A TCP implementation that fails to double its retransmission timeout in this way is said to exhibit, “Failure to back off retrans- mission timeout.” Backing off the retransmission timer is a cornerstone of network stability in the presence of congestion.
+% Suppose a TCP implementation correctly implements this exponential backoff procedure for the retransmis- sion timeout. Does that TCP implementation need the window-based congestion control scheme as well? Justify briefly
+\section{Question Two}
+Yes. Exponential backoff is a reative procedure for mitigating congestion, it does not prevent congestion. Consider the following example. You are sending a 10 GB file from Host A to Host B over a 100 MB link. Using only exponential backoff will result in packets being sent as fast as possible. Only when a congestion point is reached do you reap any benefit from exponential backoff. Dropped packets are not rapidly resent, which would add to the congestion. Though there is no policy to stop sending new packets (packets that have not been sent before). This means that the congestion will continue to worsen until all packets have had one attempted delivery and exponential backoff will start to manage the congestion levels.
+
+% Ignoring the slow-start phase, the average throughput of a TCP connection whose cwnd ranges √
+% between W/2 and W is T = 0.75·W . Show that T ≈ 1.22·MSS for a loss rate L. RTT RTT L
+% This is the assertion in Slide 106 in the slide deck for the Transport layer. Loss rate is the ratio of number of segments lost to the number of segments sent.
+\section{Question Three}
+
+\begin{center}
+\end{center}
+
+Above is a graphical representation of what is happening to our cwnd. Let W be the size of the window in bytes, MSS be the maximum segment size, and RTT be round trip time. For each successfully delivered packet, the cwnd increases by 1. This means that it takes $\frac{W/2}{\mathit{MSS}}$ RTTs to go from a cwnd size of $\frac{W/2}{\mathit{MSS}}$ to $\frac{W}{\mathit{MSS}}$. The total number of packets sent in one of these cycles (each "saw tooth") is equal to the area under the curve. This is easily approximated due to the geometry of the curve.
+
+\[
+N_{packets} = \frac{W/2}{\mathit{MSS}}\cdot\frac{W/2}{\mathit{MSS}} + \frac{1}{2}\cdot\frac{W/2}{\mathit{MSS}}\cdot\frac{W/2}{\mathit{MSS}}
+\]
+
+\[
+N_{packets} = \frac{3\cdot W^{2}}{8\cdot \mathit{MSS^{2}}}
+\]
+
+\[
+Throughput_{packets/second} = \frac{data_{per cycle}}{time_{per cycle}}
+\]
+
+\[
+Throughput_{packets/second} = \frac{\frac{3\cdot W^{2}}{8\cdot \mathit{MSS^{2}}}}{\frac{W\cdot \mathit{RTT}}{2\cdot \mathit{MSS}}} = \frac{3\cdot W}{4\cdot \mathit{RTT}}
+\]
+
+\[
+Throughput_{bytes/second} = Throughput_{packets/second} \cdot \mathit{MSS}
+\]
+
+The above calculations do not take into account packet lost, but will be very helpful nonetheless. With a packet loss ratio of $L$, we know that the total number of continous, successfully sent packets sent will be equal to $\frac{1}{L}$ We can plug this into our previous equation for the number of packets per cycle.
+
+\[
+\frac{1}{L} = \frac{3\cdot W^{2}}{8\cdot \mathit{MSS^{2}}}
+\]
+
+Solving for $W$, we find that:
+
+\[
+W = \sqrt{\frac{8}{3\cdot L}}\cdot \mathit{MSS}
+\]
+
+Plugging in this value of $W$ into our Throughput equation we confirm that:
+
+\[
+Throughput_{bytes/second} = \frac{3\cdot \sqrt{\frac{8}{3\cdot L}}\cdot \mathit{MSS}}{4\cdot \mathit{RTT}} \approx \frac{1.22\cdot \mathit{MSS}}{\mathit{RTT}\cdot \sqrt{L}}
+\]
+
+% Consider the figure from Slide 108 for the Transport layer that illustrates the convergence of TCP’s AIMD algorithm. Suppose, instead of a multiplicative decrease, TCP decreases the window size by a constant amount (an “additive decrease”). Would the resulting AIAD algorithm converge to an equal share for the two connections? Justify your answer using a similar diagram.
+\section{Question Four}
+No. Addidtive increase gives a slope of 1 and so it follows that additive decrease gives a slow of -1. No progress towards equilibrium can be made without $slope < -1$.
+\begin{center}
+
+\end{center}
+
+
+% In this problem, we consider the delay introduced by the TCP slow-start phase. Consider a client and a server that are directly connected by a link of rate R. Suppose the client wants to retrieve data whose size is 15S, where S is the MSS. Assume that the RTT between the sender and receiver is constant. Ignoring protocol headers, determine the time to retrieve the data, including TCP connection establishment, for each of the following cases.
+\section{Question Five}
+
+\subsection{$4S/R>S/R+RTT >2S/R$}
+
+\begin{align*}
+\text{Let} P(x) &= xR/S + \mathit{RTT} \\
+\\
+t &= \mathit{RTT} + P(1) + P(2) + P(4) + P(8) \\
+t &= 16S/R + 4\mathit{RTT} \\
+\\
+S/R + \mathit{RTT} &> 2S/R \\
+\mathit{RTT} &> S/R \\
+\therefore\qquad t &> 20S/R \\
+\\
+4S/R &> S/R + RTT \\
+3S/R &> RTT \\
+\therefore\qquad 28S/R &> t \\
+\\
+28S/R &> t > 20S/R
+\end{align*}
+
+\subsection{$S/R+RTT >4S/R$}
+
+\begin{align*}
+t &= 16S/R + 4\mathit{RTT} \\
+\\
+S/R + \mathit{RTT} &> 4S/R \\
+\mathit{RTT} &> 3S/R \\
+\therefore\qquad t &> 28S/R \\
+\end{align*}
+
+\subsection{$S/R>RTT$}
+
+\begin{align*}
+t &= 16S/R + 4\mathit{RTT} \\
+\\
+S/R &> \mathit{RTT} \\
+\therefore\qquad t &> 20\mathit{RTT} \\
+\end{align*}
+
+
+\section{Question Six}
+
+% A department within the university wants to have 100 (single-homed) hosts that are addressable from the public Internet. The university is willing to allocate the department the prefix 129.97.44.0/25. Will this suffice for the department? Justify. Also, if your answer is ‘yes,’ give the range of IP addresses that may be assigned to hosts.
+\subsection{Part A}
+
+Since there are 32 bits in an IP address, given a mask of 25 bits, we are left with 7. Since $2^7 >= 100$, this subnet will suffice for the department.
+
+The given mask allows the last 7 bits to vary for the department, providing addresses in the range $129.97.44.0 \to 129.97.44.127$.
+
+% Now assume that the department comprises three research groups. Unfortunately, each has a political problem with the others, and each insists on a separate IP subnet. Research group R1 has 70 hosts, R2 has 20 hosts and R3 has the remainder (10 hosts). Can the department support the three groups within the 129.97.44.0/25 prefix it has been assigned by the university? Justify.
+\subsection{Part B}
+
+Because each group wants a separate subnet, each requires a $\lceil \log_2(h) \rceil$ bits where $h$ is the number of hosts requested.
+
+Group R1 thus requires 7 bits, R2 requires 5 and R3 requires 4. However, the total assignable space is only 7 bits, and thus group R1 must necessarily claim all of it -- leaving no subnet available for R2 or R3.
+
+%  As it turns out, R1 is willing to make do with only 45 hosts that are addressable from the Internet. They need the other 25 to be able to access Internet services such as the WWW, but not necessarily be directly addressable from outside the research group. But each group still insists on a separate IP subnet. Can the department now make do with the prefix it has been allocated? Justify. If your answer is ‘yes,’ specify an IP address allocation policy for all hosts within the department. (You shouldn’t have to list every one of the 100 addresses. You should be able to specify using ranges.)
+\subsection{Part C}
+
+R1 now needs 46 addresses -- 45 for the publicly-addressable hosts, and one for NAT to address the other 25. In total they now need a mask of $\lceil \log_2 46 \rceil = 6 bits$. In order to accommodate them, the university can assign the subnet $129.97.44.0/6$, corresponding to the addresses $129.97.44.0 \to 129.97.44.63$.
+
+To R2, the university now grants $129.97.44.64/5$: giving the address range $129.97.44.64 \to 129.96.44.95$.
+
+R3 correspondingly, is assigned $129.97.44.96/4$; ie. the range $129.97.44.96 \to 129.97.44.111$.
+
+\section{Question Seven}
+
+\subsection{Part a}
+
+Does this request go anywhere?
+\arp{uhhh}{?}{129.97.3.79}{aa}{ff}
+
+\subsection{Part b}
+
+\arp{C finds D}{129.97.3.5}{129.97.3.10}{cc}{ff}
+\arp{D replies}{129.97.3.10}{129.97.3.5}{dd}{cc}
+
+\subsection{Part c}
+\arp{B finds R1}{129.97.2.2}{129.97.3.67}{bb}{ff}
+\arp{R1 replies}{129.97.3.67}{129.97.2.2}{01}{bb}
+\arp{B sends message via R1}{129.97.2.2}{129.97.3.5}{bb}{01}
+\arp{R1 finds R2}{129.97.3.67}{129.97.3.72}{01}{ff}
+\arp{R2 replies}{129.97.3.72}{129.97.3.67}{02}{01}
+% R1 now knows about R2
+\arp{R1 sends B's message to R2}{129.97.2.2}{129.97.3.5}{01}{02}
+\arp{R2 finds C}{129.97.3.72}{129.97.3.5}{02}{ff}
+\arp{C replies}{129.97.3.5}{129.97.3.72}{cc}{02}
+% R2 now knows about C
+\arp{R2 sends B's message to C}{129.97.2.2}{129.97.3.5}{02}{cc}
+
+
+\subsection{Part d}
+
+\arp{D finds R2}{129.97.3.10}{129.97.3.1}{dd}{ff}
+\arp{R2 replies}{129.97.3.1}{129.97.3.10}{02}{dd}
+\arp{D sends message via R2}{129.97.3.10}{67.195.160.76}{dd}{02}
+\arp{R2 finds R1}{129.97.3.72}{129.97.3.67}{02}{ff}
+\arp{R1 replies}{129.97.3.67}{129.97.3.72}{01}{02}
+\arp{R2 forwards message via R1}{129.97.3.10}{67.195.160.76}{02}{01}
+\arp{R1 finds internet}{public ip}{74.11.22.14}{01}{ff}
+\arp{Internet replies}{74.11.22.14}{public ip}{in}{01}
+\arp{R1 forwards message via internet}{129.97.3.10}{67.195.160.76}{01}{in}
+
+\end{document}

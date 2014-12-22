@@ -1,0 +1,7 @@
+Some improvements that would likely have a great effect on performance would
+be giving the hashing responsibility to the mappers and allowing them to push
+the resulting KeyValues to the appropriate reducer, rather than relying on the
+reducers to always poll.
+
+Furthermore, not requiring the SortMappers to make several passes of the input
+streams (which makes the algorithm O(n^2)) would be a boon.

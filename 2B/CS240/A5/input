@@ -1,0 +1,123 @@
+CS240—Assignment 5 (Spring 2012)
+B. Lushman
+A. Lopez-Ortiz
+Due Date: Wednesday, July 25, 5pm
+Please read http://www.student.cs.uwaterloo.ca/~cs240/s12/guidelines.pdf for guide-
+lines on submission. In particular, don’t forget to make a cover page
+(https://www.student.cs.uwaterloo.ca/~isg/makeCover?course=cs240) and attach it to the
+front of any written assignment. All logs are base 2.
+Problems 1, 2a-b, 3, 4, 5, and Bonus documentation are written problems. Submit your solution
+on paper to the hand-in boxes in MC, or electronically (PDF format) via the submit command.
+Problems 2c, 6, and the Bonus are programming problems. Submit your solutions electronically,
+via the submit command.
+Question 1 (8 marks)
+For each of the following pattern strings, determine the Knuth-Morris-Pratt failure array:
+(a) P =SHE SELLS SEASHELLS
+(b) P =ABRACADABRACADABRA
+(c) P =ABRACADABRACAPABRA
+(d) P =ABRACADABRACABABRA
+Question 2 (6 + 4 + 10 = 20 marks)
+In this question, you will extend the pattern-matching capabilities of the Knuth-Morris-Pratt al-
+gorithm. In particular, you will support the special search character ?, which matches any single
+character. For example, the pattern B?T matches BAT, BOT, BST, or any other three-character string
+that starts with B and ends with T. For simplicity, you may assume that the target string contains
+no ?’s.
+(a) Give pseudocode for the KMP search function, and for the function that computes the KMP
+failure array, taking into account the special behaviour of the character ?.
+(b) Give the failure arrays for the following pattern strings:
+(a) P =S?E SE?LS SEASHELLS
+(b) P =ABRACADABRAC???BRA
+(c) Implement your algorithm in C++. Call your program kmp (file kmp.cc) with the following
+command-line interface:
+./kmp "g?a?ming" programming
+3
+./kmp joy debugging
+NoNote that quotation marks around the command-line arguments are optional in Unix, but
+if the pattern contains ?’s, you will need quotation marks. Otherwise, the shell will try to
+glob the question marks. The quotation marks will be stripped off by the shell before your
+program sees them, so you don’t need to try to handle them inside your program.
+Question 3 (8 marks)
+For the given target and pattern strings, trace through the operation of the Boyer-Moore algorithm
+on these strings. At each step, you must indicate which characters are being compared, the shift
+suggested by the bad character heuristic, the shift suggested by the good suffix heuristic, and the
+shift actually taken.
+(a) T =BASEBALL, P =CRYING
+(b) T =ABCDEACDABCDEECDABCDEBCD, P =ABCDEBCD
+Question 4 (8 + 4 = 12 marks)
+Let S1 and S2 be sets of strings, represented respectively as tries T1 and T2 . For the purposes of
+this question, define the magnitude of a set S of words, denoted ||S||, as the total length of all
+words in S.
+(a) Give pseudocode for algorithms to compute tries representing S1 ∪ S2 and S1 ∩ S2
+(b) Estimate the running times of these algorithms in terms of the magnitudes of the sets involved.
+Question 5 (5 + 12 = 17 marks)
+(a) Assume that we are using a 4-bit character set, with characters A–P, encoded such that
+0000=A, 0001=B, . . ., 1111=P. Assume that all of the characters A through P occur equally
+frequently in a string S. Under these assumptions, show that S is incompressible under
+Huffman encoding.
+(b) Consider the following string:
+I THINK THAT I SHALL NEVER SEE
+A POEM LOVELY AS A TREE
+(a) Tally up the frequencies of all characters in this string, including the space and newline
+characters. Assume that there is a newline character at the end of each line, and that
+there are no spaces at the beginning or end of either line.
+(b) Construct the Huffman tree for this string, based on your tally.
+NOTE: Characters that do not occur in the string do not need to occur in your Huffman
+tree.
+(c) Use your Huffman tree to compress the string, and give the bitstring resulting from your
+compression.
+(d) In order to have enough bits to encode 26 letters, plus space and newline (28 characters
+in total), you need at least a 5-bit character set. Assuming uncompressed characters are
+5 bits each, calculate the compression ratio of your Huffman encoding (i.e. length in
+bits of compressed string to length in bits of uncompressed string) without taking into
+account the cost of communicating the encoding dictionary itself.Question 6 (20 marks)
+Implement the LZW compression scheme in C++. Your program will be called lzw (source file
+lzw.cc). It consumes two file names on the command line, for example:
+./lzw source-file-name compressed-file-name
+This command line tells your program to read bytes from source-file-name, compress the
+bytes using LZW, and output the compressed bits to compressed-file-name. To facilitate the
+process of outputting bits, we will provide for you a class implementing the following interface:
+class BitBuffer {
+public:
+void addBit(char theBit);
+// Adds a bit to the bit buffer
+// theBit should be 0 or 1
+bool byteReady(); // True if the bit buffer contains at least 8 bits
+bool isEmpty(); // True if the bit buffer contains no bits
+unsigned char getByte(); // Fetches a byte from the bit buffer
+// If fewer than 8 bits remain in the buffer,
+// they are padded with 0.
+};
+For example, if you want to output the bits 11010, you would issue the following method calls
+to a BitBuffer b:
+b.addBit(1);
+b.addBit(1);
+b.addBit(0);
+b.addBit(1);
+b.addBit(0);
+To fetch a byte from the b for output to a binary file:
+unsigned char c = b.getByte();
+NOTE: Use unsigned chars when fetching characters from the source file.
+NOTE: Your algorithm will emit 10-bit codes at all times; do not increase the bit-length of
+your codes at any time. If your dictionary is full, reuse the oldest multi-character entry in the
+dictionary (i.e., start over at 257, without erasing the other dictionary entries; overwrite one old
+code at a time).
+NOTE: Your initial dictionary contains entries 0–255, representing all possible single byte
+characters (extended ASCII encoding). Use the code 256 (binary 0100000000) to indicate EOF.
+The last code you emit in your compressed output should be 256, so that the decompression will
+be able to detect and discard any zero-padding at the end of the compressed output.
+Our autotesting will use your compressor to compress a file, and our decompressor to decompress
+the result. The result we get after compression and decompression should be identical to the original
+file.
+We will provide an executable decompressor for use on the linux.student.cs environment.
+This is the same decompressor that we will use to autotest your code. Compressing a file with your
+compressor, and then decompressing it with our compressor, should produce exactly the same file
+you started with (use diff to verify this).Bonus (10 marks)
+Using whatever techniques you want, write compression and decompression programs that outper-
+form ordinary LZW compression on our benchmarks. Your programs should be in the source files
+comp.cc and decomp.cc, and should use the following command formats:
+./comp source-file compressed-output-file
+./decomp source-file decompressed-output-file
+You must include, as part of your written submission, a description of what you implemented,
+and how it takes advantage of redundancies in the source text, beyond what ordinary LZW encoding
+does. Without a good description of your approach, your submission earns no marks. Making shell
+calls to provided compression software (e.g. gzip) does not earn marks.

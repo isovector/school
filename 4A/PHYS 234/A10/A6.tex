@@ -1,0 +1,141 @@
+\documentclass[12pt]{article}
+
+\usepackage[margin=1in]{geometry}
+\usepackage{amsmath,amssymb}
+\usepackage{amsfonts}
+\usepackage{braket, units, enumitem}
+
+\begin{document}
+
+\newcounter{set}
+\setcounter{set}{1}
+\newcounter{problem}[set]
+\newcommand{\problem}{{\vspace{2\baselineskip}\noindent\large \bfseries Problem~\arabic{set}:}\\\refstepcounter{set}}
+\newcommand{\problemsub}{\refstepcounter{problem}{\vspace{2\baselineskip}\noindent\large \bfseries Problem~\arabic{set} \roman{problem}:}\\}
+\newcommand{\problemasub}{\refstepcounter{problem}{\vspace{2\baselineskip}\noindent\large \bfseries Problem~\arabic{set} \alph{problem}:}\\}
+\newcommand*\colvec[3][]{\begin{bmatrix}\ifx\relax#1\relax\else#1\\\fi#2\\#3\end{bmatrix}}
+\newcommand{\Ketbra}[1]{\Ket{#1}\Bra{#1}}
+\newcommand{\Ketbrad}[2]{\Ket{#1}_{#2}{}_{#2}\Bra{#1}}
+\newcommand{\del}{\partial}
+\renewcommand{\d}{\mathrm{d}}
+
+\nocite{*}
+
+\title{PHYS 234 - A10}
+
+\author{Alexander Maguire \\ 
+amaguire@uwaterloo.ca \\
+20396195}
+\maketitle
+
+% % % % % % % % % % % % % % % % preamble
+
+% % 1
+\problemasub
+
+\begin{align*}
+\Psi(x, 0) &= A[\psi_1(x) + \psi_2(x)] \\
+\\
+1 &= \int_{-\infty}^{\infty}\! \Psi(x,0)^2 \, \d x \\
+&= \int_{-\infty}^{\infty}\! A^2\psi_1^2(x) + A^2\psi_2^2(x) \, \d x \\
+&= \int_{-\infty}^{\infty}\! A^2\psi_1^2(x) \, \d x + \int_{-\infty}^{\infty}\! A^2\psi_2^2(x) \, \d x \\
+&= A^2\left[\int_{-\infty}^{\infty}\! \psi_1^2(x) \, \d x + \int_{-\infty}^{\infty}\! \psi_2^2(x) \, \d x \right] \\
+&\text{(assume $\psi_i(x)$ is normalized)} \\
+&= 2A^2 \\
+\\
+\to A &= \frac{1}{\sqrt{2}}
+\end{align*}
+
+\newpage
+\problemasub
+\newcommand{\eigexp}[1]{\exp\left\{\frac{-i}{\hbar}#1t\right\}}
+\newcommand{\absq}[1]{\left|#1\right|^2}
+\begin{align*}
+\Psi(x, 0) &= \frac{1}{\sqrt{2}}[\psi_1(x) + \psi_2(x)] \\
+\Psi(x, t) &= \frac{1}{\sqrt{2}}\left[\eigexp{E_1}\psi_1(x)+\eigexp{E_2}\psi_2(x)\right] \\
+&= \frac{1}{\sqrt{2}}\left[\eigexp{\frac{\hbar^2\pi^2}{2ma^2}}\psi_1(x)+\eigexp{\frac{2\hbar^2\pi^2}{ma^2}}\psi_2(x)\right] \\
+&= \frac{1}{\sqrt{a}}\left[\eigexp{\frac{\hbar^2\pi^2}{2ma^2}}\sin{\frac{\pi x}{a}}+\eigexp{\frac{2\hbar^2\pi^2}{ma^2}}\sin{\frac{2\pi x}{a}}\right]
+\end{align*}
+
+\renewcommand{\eigexp}[1]{\exp\left\{#1t\right\}}
+\begin{align*}
+\absq{\Psi(x,t)} &= \frac{1}{a}\absq{\eigexp{-i\omega}\sin{\frac{\pi x}{a}}+\eigexp{-4i\omega}\sin{\frac{2\pi x}{a}}}
+\\
+&= \frac{1}{a}\left[\sin^2{\frac{\pi x}{a}}+\sin^2{\frac{2\pi x}{a}} +
+\eigexp{-3i\omega}\sin{\frac{\pi x}{a}}\sin{\frac{2\pi x}{a}} \right.\\
+&\left.\qquad+\eigexp{3i\omega}\sin{\frac{\pi x}{a}}\sin{\frac{2\pi x}{a}}\right]
+\\
+&= \frac{1}{a}\left[\sin^2{\frac{\pi x}{a}}+\sin^2{\frac{2\pi x}{a}} +
+2\sin{\frac{\pi x}{a}}\sin{\frac{2\pi x}{a}}\cos{3\omega t}\right]
+\end{align*}
+
+\problemasub
+\begin{align*}
+\Braket{\hat{x}} &= \int_{-\infty}^{\infty}\! \Psi^*(x,t) \hat{x} \Psi(x,t) \, \d x \\
+&= \int_{0}^{a}\! x\absq{\Psi(x,t)} \, \d x \\
+&= \frac{1}{a}\left[\frac{a^2}{2}+ \int_{-\infty}^{\infty}\! 2x\sin{\frac{\pi x}{a}}\sin{\frac{2\pi x}{a}}\cos{3\omega t} \,\d x \right] \\
+&= \frac{1}{a}\left[\frac{a^2}{2} - \frac{16a^2\cos{3\omega t}}{9\pi^2} \right] \\
+&= a\left[\frac{1}{2} - \frac{16\cos{3\omega t}}{9\pi^2} \right]
+\end{align*}
+The angular frequency is $3\omega$, and the amplitude of the wave is $16a/(9\pi^2)$.
+
+\newpage
+\problemasub
+\begin{align*}
+\mathcal{P}(E_1) &= \absq{\Braket{E_1|\Psi}} \\
+&= \frac{1}{2} \\
+\\
+\mathcal{P}(E_2) &= \absq{\Braket{E_2|\Psi}} \\
+&= \frac{1}{2} \\
+\\
+\Braket{\hat{H}} &= \mathcal{P}(E_1)E_1 + \mathcal{P}(E_2)E_2 \\
+&= \frac{1}{2}\left[\frac{\hbar^2\pi^2}{2ma^2}+\frac{4\hbar^2\pi^2}{2ma^2}\right] \\
+&= \frac{5\hbar^2\pi^2}{4ma^2}
+\end{align*}
+
+The expectation of the Hamiltonian is the weighted sum of the individual eigenenergies of the particle.
+
+\stepcounter{set}
+\problemasub
+\begin{align*}
+\psi_0'(x) &= \frac{1}{\pi^{1/4}\sqrt{x_0'}}\exp\left\{-\frac{x^2}{2x_0'^2}\right\} \\
+\psi_1'(x) &= \frac{\sqrt{2}}{\pi^{1/4}\sqrt{x_0'}}\frac{x}{x_0'}\exp\left\{-\frac{x^2}{2x_0'^2}\right\} \\
+\psi_2'(x) &= \frac{1}{\pi^{1/4}\sqrt{2x_0'}}\left( 2\frac{x^2}{x_0'^2} -1\right)\exp\left\{-\frac{x^2}{2x_0'^2}\right\}
+\end{align*}
+
+\begin{align*}
+\psi_0(x)\biggr|_{x_0 = 2x_0'} &= \frac{1}{\pi^{1/4}\sqrt{2x_0'}}\exp\left\{-\frac{x^2}{2(2x_0')^2}\right\} \\
+&= \frac{1}{\pi^{1/4}\sqrt{2x_0'}}\exp\left\{-\frac{x^2}{8x_0'^2}\right\} \\
+&= c_0 \psi_0'(x) + c_1 \psi_1'(x) + c_2 \psi_2'(x)
+\\
+\frac{1}{\pi^{1/4}\sqrt{2x_0'}}\kappa^{1/4} &=
+c_0 \frac{1}{\pi^{1/4}\sqrt{x_0'}}\kappa + 
+c_1 \frac{\sqrt{2}}{\pi^{1/4}\sqrt{x_0'}}\frac{x}{x_0'}\kappa + 
+c_2 \frac{1}{\pi^{1/4}\sqrt{2x_0'}}\left( 2\frac{x^2}{x_0'^2} -1\right)\kappa, \qquad \kappa = \exp\left\{-\frac{x^2}{x_0'^2}\right\}
+\\
+&=
+c_0 \frac{\sqrt{2}}{\pi^{1/4}\sqrt{2x_0'}}\kappa + 
+c_1 \frac{\sqrt{2}}{\pi^{1/4}\sqrt{x_0'}}\frac{x}{x_0'}\kappa + 
+c_2 \frac{1}{\pi^{1/4}\sqrt{2x_0'}}\left( 2\frac{x^2}{x_0'^2} -1\right)\kappa
+\\
+&=
+\frac{1}{\pi^{1/4}\sqrt{2x_0'}} \left[
+c_0\sqrt{2}\kappa + c_1\sqrt{2}\kappa\frac{x}{x_0'} + c_2\kappa\left(2\frac{x^2}{x_0'^2}-1\right)
+\right]
+\\
+\kappa^{1/4} &= c_0\sqrt{2}\kappa + c_1\sqrt{2}\kappa\frac{x}{x_0'} + c_2\kappa\left(2\frac{x^2}{x_0'^2}-1\right) \\
+&= c_0\sqrt{2}\kappa + c_1\sqrt{2}\kappa\lambda + c_2\kappa\left(2\lambda^2-1\right), \qquad \lambda = x/x_0' \\
+\kappa^{-3/4} &= c_0\sqrt{2} + c_1\sqrt{2}\lambda + 2c_2\lambda^2-c_2 \\
+&\dots\\
+&\dots\\
+&\text{\textbf{HNNNNNNG}}\\
+&\dots\\
+&\dots
+\end{align*}
+
+
+\problemasub
+
+The eigenenergies of the state will be $E_0$, $E_1$, $E_2$, found with probabilities: $$\mathcal{P}(E_i) = \absq{c_i} \quad \forall i \in \{0,1,2\}$$
+
+\end{document}

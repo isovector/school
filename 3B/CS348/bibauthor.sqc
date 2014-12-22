@@ -1,0 +1,481 @@
+#include <iostream>
+#include <sstream>
+#include <cstdlib>
+#include <vector>
+#include <string.h>
+#include <algorithm>
+using namespace std;
+
+#include "util.h"
+
+#define SQL_STRING(str) strcpy(sql_##str, str.c_str())
+#define goto HottySqlMama::Error
+
+// some really terrible trim function fomr the
+string trim(string s)
+ {
+    size_t p = s.find_first_not_of(" \t");
+    s.erase(0, p);
+ 
+    p = s.find_last_not_of(" \t");
+    if (string::npos != p)
+       s.erase(p+1);
+    return s;
+}
+// ------------------------------------------------
+
+EXEC SQL INCLUDE SQLCA;
+EXEC SQL BEGIN DECLARE SECTION;
+    short int sql_aid;
+    short int sql_year;
+    short int sql_volume;
+    short int sql_number;
+    short int sql_startpage;
+    short int sql_endpage;
+    short int sql_count;
+    char sql_author[32];
+    char sql_title[128];
+    char sql_pubid[16];
+    char sql_publisher[64];
+EXEC SQL END DECLARE SECTION;
+
+// ------------------------------------------------
+
+class Publication;
+
+class HottySqlMama {
+public:
+    HottySqlMama();
+    ~HottySqlMama();
+   
+    vector<string> getPublicationsByAuthor(string author);
+    Publication *getPublication(string pubid);
+    
+    struct DataQuery {
+        string type;
+        short int aid;
+        string pubid;
+        vector<string> params;
+        bool isUpdate;
+    };
+    
+    HottySqlMama::DataQuery parseLine(string input) const;
+
+    class Error {
+    public:
+        Error() {
+            EXEC SQL ROLLBACK;
+            EXEC SQL CONNECT reset;
+            exit(1);
+        };
+    };
+};
+
+// ------------------------------------------------
+
+class Publication {
+public:
+    Publication(HottySqlMama &mama, string pubid);
+
+    const vector<string> &getAuthors() const;
+    string getPubid() const;
+    string getTitle() const;
+    
+    virtual int getYear() const = 0;
+    virtual string toString() const;
+    virtual string getType() const = 0;
+
+protected:
+    HottySqlMama &mama;
+    string pubid;
+    string title;
+    vector<string> authors;
+};
+
+// ------------------------------------------------
+
+Publication::Publication(HottySqlMama &mama, string pubid) : mama(mama), pubid(pubid) {
+    strcpy(sql_pubid, pubid.c_str());
+    
+    EXEC SQL SELECT title INTO :sql_title FROM publication WHERE pubid = :sql_pubid;
+    EXEC SQL DECLARE Publication_Authors CURSOR FOR
+        SELECT a.name FROM wrote w 
+        INNER JOIN author a ON a.aid = w.aid
+        WHERE w.pubid = :sql_pubid
+        ORDER BY w.aorder ASC;
+    
+    title = trim(sql_title);
+    
+    EXEC SQL OPEN Publication_Authors;
+    while (true) {
+        EXEC SQL FETCH Publication_Authors INTO :sql_author;
+        if (SQLCODE == 100) break;
+        authors.push_back(trim(sql_author));
+    }
+    EXEC SQL CLOSE Publication_Authors;
+}
+
+string Publication::getPubid() const {
+    return pubid;
+}
+
+string Publication::getTitle() const {
+    return title;
+}
+
+const vector<string> &Publication::getAuthors() const {
+    return authors;
+}
+
+string Publication::toString() const {
+    stringstream s;
+    
+    s << "Pubid:\t" << pubid << endl;
+    s << "Type:\t" << getType() << endl;
+    
+    s << "Authors:";
+    if (authors.size()) {
+        for (vector<string>::const_iterator it = authors.begin(); it != authors.end(); ++it) {
+            s << *it << ", ";
+        }
+        
+        s << "\b\b";
+    }
+    
+    s << endl;
+    s << "Title:\t" << title << endl;
+    
+    return s.str();
+}
+
+// ------------------------------------------------
+
+class Article : public Publication {
+public:
+    Article(HottySqlMama &mama, string pubid);
+
+    virtual string toString() const;
+    virtual int getYear() const { return appearsIn->getYear(); }
+    virtual string getType() const { return "article"; }
+    Publication* getAppearsIn() const { return appearsIn; }
+
+
+private:
+    Publication *appearsIn;
+    int startPage;
+    int endPage;
+};
+
+// ------------------------------------------------
+
+class Proceedings : public Publication {
+public:
+    Proceedings(HottySqlMama &mama, string pubid);
+
+    virtual string toString() const;
+    virtual int getYear() const { return year; }
+    virtual string getType() const { return "proceedings"; }
+
+private:
+    int year;
+};
+
+// ------------------------------------------------
+
+class Journal : public Publication {
+public:
+    Journal(HottySqlMama &mama, string pubid);
+
+    virtual string toString() const;
+    virtual int getYear() const { return year; }
+    virtual string getType() const { return "journal"; }
+
+private:
+    int volume;
+    int number;
+    int year;
+};
+
+// ------------------------------------------------
+
+class Book : public Publication {
+public:
+    Book(HottySqlMama &mama, string pubid);
+
+    virtual string toString() const;
+    virtual int getYear() const { return year; }
+    virtual string getType() const { return "book"; }
+
+private:
+    string publisher;
+    int year;
+};
+
+// ------------------------------------------------
+
+Article::Article(HottySqlMama &mama, string pubid) : Publication(mama, pubid) {
+    SQL_STRING(pubid);
+
+    EXEC SQL SELECT appearsin, startpage, endpage 
+        INTO :sql_pubid, :sql_startpage, :sql_endpage 
+        FROM article WHERE pubid = :sql_pubid;
+    
+    startPage = sql_startpage;
+    endPage = sql_endpage;
+    appearsIn = mama.getPublication(sql_pubid);
+}
+
+string Article::toString() const {
+    stringstream s;
+    s << Publication::toString();
+    s << "In:\t" << appearsIn->getPubid() << endl;
+    s << "Pages:\t" << startPage << "--" << endPage << endl;
+    
+    return s.str();
+}
+
+// ------------------------------------------------
+
+Proceedings::Proceedings(HottySqlMama &mama, string pubid) : Publication(mama, pubid) {
+    SQL_STRING(pubid);
+
+    EXEC SQL SELECT year INTO :sql_year FROM proceedings WHERE pubid = :sql_pubid;
+    year = sql_year;
+}
+
+string Proceedings::toString() const {
+    stringstream s;
+    s << Publication::toString();
+    s << "Year:\t" << year << endl;
+    
+    return s.str();
+}
+
+// ------------------------------------------------
+
+Journal::Journal(HottySqlMama &mama, string pubid) : Publication(mama, pubid) {
+    SQL_STRING(pubid);
+
+    EXEC SQL SELECT volume, number, year 
+        INTO :sql_volume, :sql_number, :sql_year 
+        FROM journal WHERE pubid = :sql_pubid;
+    volume = sql_volume;
+    number = sql_number;
+    year = sql_year;
+}
+
+string Journal::toString() const {
+    stringstream s;
+    s << Publication::toString();
+    s << "Volume:\t" << volume << endl;
+    s << "Number:\t" << number << endl;
+    s << "Year:\t" << year << endl;
+    
+    return s.str();
+}
+
+// ------------------------------------------------
+
+Book::Book(HottySqlMama &mama, string pubid) : Publication(mama, pubid) {
+    SQL_STRING(pubid);
+
+    EXEC SQL SELECT publisher, year 
+        INTO :sql_publisher, :sql_year 
+        FROM book WHERE pubid = :sql_pubid;
+    publisher = trim(sql_publisher);
+    year = sql_year;
+}
+
+string Book::toString() const {
+    stringstream s;
+    s << Publication::toString();
+    s << "Publisher:\t" << publisher << endl;
+    s << "Year:\t" << year << endl;
+    
+    return s.str();
+}
+
+// ------------------------------------------------
+
+HottySqlMama::HottySqlMama() {
+    EXEC SQL WHENEVER SQLERROR GO TO __HottySqlMamaError;
+
+    //cout << "connecting" << endl;
+    EXEC SQL CONNECT TO cs348;
+    //cout << "connected to cs348" << endl;
+}
+
+HottySqlMama::~HottySqlMama() {
+    EXEC SQL COMMIT;
+    EXEC SQL CONNECT reset;
+}
+
+vector<string> HottySqlMama::getPublicationsByAuthor(string author) {
+    SQL_STRING(author);
+    
+    EXEC SQL SELECT aid INTO :sql_aid FROM author WHERE name = :sql_author;
+    
+    EXEC SQL DECLARE Author_Publications CURSOR FOR 
+        SELECT pubid FROM wrote WHERE aid = :sql_aid;
+    EXEC SQL OPEN Author_Publications;
+    
+    vector<string> publications;
+    while (true) {
+        EXEC SQL FETCH Author_Publications INTO :sql_pubid;
+        if (SQLCODE == 100) break;
+        publications.push_back(trim(sql_pubid));
+    }
+    
+    EXEC SQL CLOSE Author_Publications;
+    
+    return publications;
+}
+
+Publication *HottySqlMama::getPublication(string pubid) {
+    SQL_STRING(pubid);
+    
+    EXEC SQL SELECT COUNT(*) INTO :sql_count FROM proceedings WHERE pubid = :sql_pubid;
+    if (sql_count) {
+        return new Proceedings(*this, pubid);
+    }
+    
+    EXEC SQL SELECT COUNT(*) INTO :sql_count FROM article WHERE pubid = :sql_pubid;
+    if (sql_count) {
+        return new Article(*this, pubid);
+    }
+    
+    EXEC SQL SELECT COUNT(*) INTO :sql_count FROM journal WHERE pubid = :sql_pubid;
+    if (sql_count) {
+        return new Journal(*this, pubid);
+    }
+    
+    EXEC SQL SELECT COUNT(*) INTO :sql_count FROM book WHERE pubid = :sql_pubid;
+    if (sql_count) {
+        return new Book(*this, pubid);
+    }
+
+    cerr << "Publication does not exist" << endl;
+    exit(5);
+}
+
+HottySqlMama::DataQuery HottySqlMama::parseLine(string input) const {
+    HottySqlMama::DataQuery data;
+    
+    char *token, *dup = strdup(str.c_str());
+    
+    token = strtok(dup, "(#)");
+    data.type = token;
+    
+    if (data.type.substr(0, 6) == "author") {
+        token = strtok(NULL, "(#)");
+        data.aid = atoi(token);
+        token = strtok(NULL, "(#)");
+        data.params.push_back(token);
+        free(dup);
+        
+        sql_aid = data.aid;
+        EXEC SQL SELECT COUNT(*) INTO :sql_count FROM author WHERE aid = :sql_aid;
+        if (sql_count) {
+            data.isUpdate = true;
+        }
+        
+        return data;
+    }
+    
+    token = strtok(NULL, "(#)");
+    data.pubid = token;
+    
+    while (token = strtok(NULL, "(#)")) {
+        data.params.push_back(token);
+    }
+    
+    strcpy(sql_pubid, data.pubid._cstr());
+    EXEC SQL SELECT COUNT(*) INTO :sql_count FROM publication WHERE pubid = :sql_pubid;
+    if (sql_count) {
+        data.isUpdate = true;
+    }
+    
+    free(dup);
+    
+    return data;
+}
+
+// ------------------------------------------------
+
+bool lessThan(Publication* p1, Publication* p2) {
+    //first check for the authors, if they are the same then we can continue with year compairison
+    if( p1->getAuthors().size() == 0 && p2->getAuthors().size() == 0)
+        return (p1->getYear() < p2->getYear());
+    // to change the precedence of empty string authors, we will switch these
+    if( p2->getAuthors().size() == 0)
+        return false;
+    if( p1->getAuthors().size() == 0)
+        return true;
+    if( p1->getAuthors().at(0) == p2->getAuthors().at(0)) {
+            return (p1->getYear() < p2->getYear());
+    } else {
+            return (p1->getAuthors().at(0) < p2->getAuthors().at(0));
+    }
+}
+
+int main(int argc, char *argv[]) {
+    HottySqlMama mama;
+    string line;
+    while (line = cin.getline(), cin) {
+        HottySqlMama::DataQuery query = mama.parseLine(line);
+        
+        #define OUTPUT(x) cout << #x ": " << query.##x << endl;
+        OUTPUT(type);
+        OUTPUT(aid);
+        OUTPUT(pubid);
+        OUTPUT(isUpdate);
+    }
+    
+    return 0;
+    
+    
+    /*
+    stringstream s;
+    for( int i = 1; i < argc; i++){
+        s << argv[i] << " ";
+    }
+
+    string authorname = s.str();
+
+    HottySqlMama mama;
+
+    //    cout << "Now searching for all publications by " << authorname << endl;
+    vector<string> pubIds = mama.getPublicationsByAuthor(authorname);
+
+    //    cout << "We have found " << pubIds.size() << " publications" << endl;
+
+    vector<Publication*> pubs;
+    for(int i = 0; i < pubIds.size(); i++) {
+        pubs.push_back( mama.getPublication( pubIds.at( i )));
+    }
+
+    //Now we need to get all of the publications that are referenced from the articles
+    for(int i = 0; i < pubs.size(); i++) {
+        if(pubs.at(i)->getType() == "article"){
+            Publication* testPub = mama.getPublication (((Article*)pubs.at(i))->getAppearsIn()->getPubid());
+
+            //Check for duplicates
+            bool duplicate = false;
+            for(int j =0; j < pubs.size(); j++) {
+                if(pubs.at(j)->getPubid() == testPub->getPubid())
+                    duplicate = true;
+            }
+
+            if(!duplicate)
+                pubs.push_back(testPub);
+        }
+    }
+
+    sort (pubs.begin(), pubs.end(), lessThan);
+    //now we have our sorted list of publications, just print the toString on each of them
+
+    for(int i = 0; i < pubs.size(); i++) {
+        cout << pubs.at(i)->toString() << endl;
+    }*/
+}
+

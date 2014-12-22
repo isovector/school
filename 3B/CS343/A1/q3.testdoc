@@ -1,0 +1,112 @@
+A1Q3 UTF8 TEST DOCUMENTATION
+============================
+The program recognizes UTF8 code sequences presented one per line. If
+a match is successful, the program says so, and any errors are also
+reported. After a successful match or an error, any extraneous bytes
+on the line are presented. A warning is issued for blank lines.
+
+USER INTERFACE TESTING
+    There is no user interface to be tested, so the testing focuses
+    solely on the algorithm used.
+
+ALGORITHM TESTING
+
+  TEST 1:
+  -------
+    DATA DESCRIPTION
+    The first test consisted of hardcoded byte sequences provided by the
+    course instructor. The byte stream, with each line numbered, is:
+
+        1	0x23, '\n',
+        2   0x23, 0x23, '\n',
+        3   0xd7, 0x90, '\n',
+        4   0xd7, '\n',
+        5   0xc2, 0xA3, '\n',
+        6   '\n',
+        7   0xb0, '\n',
+        8   0xe0, 0xe3, '\n',
+        9   0xe9, 0x80, 0x80, '\n'
+        10  0xe9, 0x80, 0x80, 0xff, 0xf8, '\n',
+        11  0xe0, 0x93, 0x90, '\n',
+        12  0xff, 0x9A, 0x84, '\n',
+        13  0xf0, 0x90, 0x89, '\n',
+        14  0xf0, 0x90, 0x89, 0x80, '\n',
+        15  0x01, '\n'
+
+    Line 1 is used to verify that simple ASCII characters are recognized
+    and parsed correctly.  Line 2 verifies that extraneous bytes after
+    ASCII characters is correctly interpreted. Line 3 is a test of a 2
+    byte UTF8 sequence. Line 4 tests that missing bytes after a UTF8 header
+    byte is considered an error. Line 5 is another test of a 2 byte UTF8
+    sequence. Line 6 checks that the empty line warning is correctly 
+    produced. Line 7 tests that single bytes with their MSB set (but lacking
+    the UTF8 header check are considered errors. Line 8 has a missing byte
+    and a missing UTF8 continuation check on the second byte. Line 9 is
+    a test of a 3-byte UTF8 byte string. Line 10 is the same as line 9 but
+    with an additional extra 2 trailing bytes. Line 11 is not minimally
+    encoded, and thus checks to ensure constraints are enforced on parsed
+    UTF8 code points. Line 12 does not conform to any UTF8 first byte checks.
+    Line 13 is missing its final byte. Line 14 is a correct 4-byte sequence.
+    Line 15 is a test of the smallest possible representative integer in
+    UTF8.
+
+    TESTING
+    Here is the script-fixed log of the testing performed with line numbers
+    attached.
+
+        1   0x23 : valid 0x23
+        2   0x23 : valid 0x23. Extra characters 0x23
+        3   0xd790 : valid 0x5d0
+        4   0xd7 : invalid
+        5   0xc2a3 : valid 0xa3
+        6    : Warning! Blank line.
+        7   0xb0 : invalid
+        8   0xe0e3 : invalid
+        9   0xe98080 : valid 0x9000
+        10  0xe98080 : valid 0x9000. Extra characters 0xfff8
+        11  0xe09390 : invalid
+        12  0xff : invalid. Extra characters 0x9a84
+        13  0xf09089 : invalid
+        14  0xf0908980 : valid 0x10240
+        15  0x1 : valid 0x1
+
+
+    ANALYSIS
+    The results from running the program with the provided, hardcoded
+    input show:
+    1)  All single ASCII bytes are correctly recognized (as indicated by
+        lines 1, 2 and 15).
+    2)  Lines containing extraenous bytes after a successful match or error
+        are correctly output after the status message (lines 2, 10, 12).
+    3)  Warnings are issued on blank lines (line 6).
+    4)  Unexpectedly terminated UTF8 byte streams result in errors (lines
+        4, 8, 13).
+    5)  Byte sequences with incorrect UTF8 check masks result in errors
+        (lines 8, 12).
+    6)  UTF8 code points encoded in the wrong range result in errors (line
+        11).
+    7)  Multi-byte sequences are correctly parsed (lines 3, 9, 10, 13, 14).
+
+    From this we can say that each condition in the main loop has been
+    exercised, and that matching and all conceivable error conditions are
+    met.
+
+  TEST 2:
+  -------
+    DATA DESCRIPTION
+    "empty.txt", is an empty input file.  It is used to verify that the end 
+    of file is detected correctly, and no extraneous output is generated.
+
+    TESTING
+    Here is the script-fixed log of the testing performed.
+
+       1 sandy@doom$ cat empty.txt
+       2 sandy@doom$ ./utf8 < empty.txt
+       3 sandy@doom$ exit
+       4 exit
+
+    ANALYSIS
+    Line 2 runs the program on "empty.txt" and line 3 show that the end-of-
+    file is correctly detected, and no extraneous output is generated.  Thus
+    the basic input processing algorithm is shown to be correct.
+

@@ -1,0 +1,9 @@
+4 a) Implementations satisfying A are: ii. Satisfying B: ii. C: i. D: iii.
+
+4 b) B is stronger than C, as neither have any preconditions, B's post conditions are stronger (they are more specific), they modify the same objects and throw the same number of exceptions (0).
+
+4 c) If "list'=list@pre+val" were replaced by "val is in lst'"the resultant would be sufficiently general, as it is true in all cases, but not sufficiently restrictive as we have a guarantee on where the val is.
+
+4 d)    modifies: lst
+        ensures: lst' = lst@pre + val
+        throws: ValInList, if val in lst@pre

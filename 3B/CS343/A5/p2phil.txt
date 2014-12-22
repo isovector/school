@@ -1,0 +1,4 @@
+A monitor using only external scheduling cannot implement this problem because
+there would be no way of conditionally accepting those calls to pickup() which
+wouldn't block (ie both forks were available). The syntax of the _Accept statement
+simply isn't expressive enough for this task.

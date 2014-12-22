@@ -1,0 +1,219 @@
+\documentclass[12pt]{article}
+
+\usepackage[margin=1in]{geometry}  % set the margins to 1in on all sides
+\usepackage{amsmath}               % great math stuff
+\usepackage{amsfonts}              % for blackboard bold, etc
+\usepackage{braket, units, enumitem}
+
+\begin{document}
+
+
+\newcounter{set}
+\setcounter{set}{1}
+\newcounter{problem}[set]
+\newcommand{\problem}{{\vspace{2\baselineskip}\noindent\large \bfseries Problem~\arabic{set}:}\\\refstepcounter{set}}
+\newcommand{\problemsub}{\refstepcounter{problem}{\vspace{2\baselineskip}\noindent\large \bfseries Problem~\arabic{set}\roman{problem}:}\\}
+\newcommand{\problemasub}{\refstepcounter{problem}{\vspace{2\baselineskip}\noindent\large \bfseries Problem~\arabic{set}\alph{problem}:}\\}
+\newcommand*\colvec[3][]{\begin{pmatrix}\ifx\relax#1\relax\else#1\\\fi#2\\#3\end{pmatrix}}
+
+
+
+\nocite{*}
+
+\title{PHYS 234 - A2}
+
+\author{Alexander Maguire \\ 
+amaguire@uwaterloo.ca \\
+20396195}
+
+\maketitle
+
+\problem %1
+
+Historically, the relevant length scale of the Davisson-Gerner experiment was approximately $\unit[1]{\AA}$, but is closer to $\unit[1\times10^{-4}][\AA]$ with modern breakthroughs in aperture design.
+
+It is so hard to detect wave-like phenomena for macroscopic objects because by the de Broglie wavelength equation, wavelength is inversely proportional to momentum. Macroscopic objects have a large mass, which implies they have a large momentum, which means their wavelengths are far too large to be measured by the Davisson-Gerner experimental apparatus. 
+
+
+\problem %2
+\begin{enumerate}[label=\alph{*})]
+\item Since additive interference happens when $2d\sin{\theta} = n\lambda$ for $n \in \mathbb{Z}$, in order to maximize our wavelength $\theta = \pi/2$ when measured from the plane of refraction. For a first-order maximum, $n = 1$.
+is
+We are looking at a diagonal plane of atoms, each $\unit[0.91]{\AA}$ from one another measured on the axis. Because $d$ measures the distance between the planes, $d = \unit[0.91]{\AA}/\sqrt{2} = \unit[0.64]{\AA}$.
+
+$$
+\lambda =  2d\sin{\pi/2} = \unit[1.3]{\AA}
+$$
+
+\newpage
+\item Assuming our electrons are traveling at non-relativistic speeds, $K = \frac{1}{2}mv^2 = \unit[300]{eV}$. Solving this gives $v = \unit[1.03\times10^7]{m/s}$, or about $0.0343c$, justifying our use of the classical equation.
+
+\begin{align*}
+\lambda &= \frac{h}{p} = \frac{h}{m_ev} = \unit[0.71]{\AA} \\
+\\
+\theta &= \arcsin{\frac{\lambda}{2d}} = \unit[0.59]{rad}
+\end{align*}
+\end{enumerate}
+ 
+\problem %3
+\begin{enumerate}[label=\alph{*})]
+\item 
+$$\mu = \frac{m_1m_2}{m_1+m_2} = \unit[0.5]{g}$$
+$$k = \mu(2\pi\nu)^2 = \unit[197]{kg/s^2}$$
+\begin{align*}
+U = \frac{1}{2}kx^2 &= \unit[9.9\times 10^{-3}]{J} \\ 
+&= \unit[6.20\times10^{16}]{eV}
+\end{align*}
+$$n = \frac{U}{h\nu} = 1.49\times10^{29}$$
+
+\item $$\frac{E_{1.49\times10^{29}+1}}{E_{1.49\times10^{29}}} - 1 \approx 0.000\%$$
+No change is detectable whatsoever.
+
+\item $$E_1 = h\nu= \unit[4.14\times10^{-1}]{eV}$$
+$$E_2 = \unit[0.827]{eV}$$
+$$E_3 = \unit[1.24]{eV}$$
+
+\newpage
+\item
+$$\mu = \frac{m_1m_2}{m_1+m_2} = \unit[8.5\times10^{-25}]{g}$$
+$$k = \mu(2\pi\nu)^2 = \unit[336]{kg/s^2}$$
+
+\begin{align*}
+x_1 = \sqrt{2 \frac{E_1}{k}} &= \unit[0.21]{\AA} \\
+x_2 = \sqrt{2 \frac{E_2}{k}} &= \unit[0.29]{\AA} \\
+x_3 = \sqrt{2 \frac{E_3}{k}} &= \unit[0.36]{\AA} \\
+\end{align*}
+\end{enumerate}
+
+
+\problemsub %4i
+\begin{align*}
+\text{let $\hat{A}$} &= \left(\begin{matrix}
+  2 & 7 \\
+  7 & 2 \\
+ \end{matrix}\right) \\
+0 &= \det{\hat{A} - \lambda\hat{I}} \\
+ &= (2-\lambda)^2-7^2 \\
+ &= 4-4\lambda+\lambda^2-49 \\
+ &= (\lambda - 9)(\lambda + 5)
+\end{align*}
+\begin{align*}
+\hat{A}\colvec{a}{b} &= \lambda_1\colvec{a}{b} \\
+\colvec{2a + 7b}{7a + 2b} &= 9\colvec{a}{b} \\
+v_1 &= \colvec{1}{1}
+\end{align*}
+\begin{align*}
+\hat{A}\colvec{a}{b} &= \lambda_2\colvec{a}{b} \\
+\colvec{2a + 7b}{7a + 2b} &= -5\colvec{a}{b} \\
+v_2 &= \colvec{-1}{1}
+\end{align*}
+
+
+
+\problemsub %4ii
+\begin{align*}
+\text{let $\hat{B}$} &= \left(\begin{matrix}
+  1 & -2 \\
+  1 & 3 \\
+ \end{matrix}\right) \\
+0 &= \det{\hat{B} - \lambda\hat{I}} \\
+ &= (1-\lambda)(3-\lambda) +2 \\
+ &= (\lambda - (2-i))(\lambda + (2+i))
+\end{align*}
+\begin{align*}
+\hat{B}\colvec{a}{b} &= \lambda_1\colvec{a}{b} \\
+\colvec{a - 2b}{a + 3b} &= (2-i)\colvec{a}{b} \\
+v_1 &= \colvec{-1-i}{1}
+\end{align*}
+\begin{align*}
+\hat{B}\colvec{a}{b} &= \lambda_2\colvec{a}{b} \\
+\colvec{a - 2b}{a + 3b} &= (2+i)\colvec{a}{b} \\
+v_2 &= \colvec{-1+i}{1}
+\end{align*}
+
+\problemsub %4iii
+\begin{align*}
+\text{let $k$} &= \frac{\hbar}{2} \\
+\text{let $\hat{C}$} &= \left(\begin{matrix}
+  0 & -i \\
+  i & 0 \\
+ \end{matrix}\right) \\
+0 &= \det{\hat{C} - \lambda\hat{I}} \\
+ &= \lambda^2-1 \\
+ &= (k\lambda - 1)(k\lambda + 1)
+\end{align*}
+\begin{align*}
+k\hat{C}\colvec{a}{b} &= \lambda_1\colvec{a}{b} \\
+k\colvec{-a-ib}{ia-b} &= \colvec{0}{0} \\
+v_1 &= k\colvec{-i}{1}
+\end{align*}
+\begin{align*}
+k\hat{C}\colvec{a}{b} &= \lambda_2\colvec{a}{b} \\
+k\colvec{a-ib}{ia+b} &= \colvec{0}{0} \\
+v_2 &= k\colvec{i}{1}
+\end{align*}
+
+\stepcounter{set}
+\problem %5
+
+$$\hat{A} = \left(\begin{matrix}
+-1 & 1 & i \\
+2 & 0 & 3 \\
+2i & -2i & 2
+\end{matrix}\right) \qquad
+\hat{B} = \left(\begin{matrix}
+2 & 0 & -i \\
+0 & 1 & 0 \\
+i & 3 & 2
+\end{matrix}\right)$$
+
+\begin{enumerate}[label=\alph{*})]
+\item %a
+$$\hat{A}+\hat{B} = \left(\begin{matrix}
+1 & 1 & 0 \\
+2 & 1 & 3 \\
+3i & 3-2i & 4
+\end{matrix}\right)$$
+
+\item %b
+$$\hat{A}\hat{B} = \left(\begin{matrix}
+-3 & 1+3 i & 3 i \\
+4+3 i & 9 & 6-2 i \\
+6 i & 6-2 i & 6 \\
+\end{matrix}\right)$$
+
+\item %c
+$$\left[\hat{A}, \hat{B}\right] = 
+\left(\begin{matrix}
+-1 & 1 & i & 2 & 0 & -i\\
+2 & 0 & 3 & 0 & 1 & 0 \\
+2i & -2i & 2 & i & 3 & 2
+\end{matrix}\right)$$
+
+\item %d
+$$\bar{\hat{A}} = \left(\begin{matrix}
+-1 & 2 & 2i \\ 
+1 & 0 & -21 \\
+i  & 3 & 2
+\end{matrix}\right)$$
+
+\item %e
+$$\hat{A}^* = \left(\begin{matrix}
+-1 & 1 & -i \\
+2 & 0 & 3 \\
+-2i & 2i & 2
+\end{matrix}\right)$$
+
+\item %f
+$$\hat{A}^\dagger = \left(\begin{matrix}
+-1 & 1 & i \\
+2 & 0 & 3 \\
+2i & -2i & 2
+\end{matrix}\right)$$
+
+\item %g
+$Tr(\hat{B}) = 2 + 1 + 2 = 5$
+\end{enumerate}
+
+
+\end{document}

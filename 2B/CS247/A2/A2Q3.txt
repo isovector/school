@@ -1,0 +1,16 @@
+void authenticate();
+// modifies: this
+// ensures: the user has the password for the account, otherwise the account is deactivated
+
+void deactivate();
+// requires: the account isn't deactivated
+// modifies: this
+// ensures: the account is deactivated
+
+void reactivate();
+// requires: the account is deactivated
+// modifies: this, passwd_
+// ensures: the account is activated, and has a new password
+
+bool check_deactivated() const;
+// returns: whether the account is deactivated

@@ -1,0 +1,181 @@
+\documentclass[12pt]{article}
+
+\usepackage[margin=1in]{geometry}
+\usepackage{amsmath}
+\usepackage{amsfonts}
+\usepackage{braket, units, enumitem}
+
+\begin{document}
+
+\newcounter{set}
+\setcounter{set}{1}
+\newcounter{problem}[set]
+\newcommand{\problem}{{\vspace{2\baselineskip}\noindent\large \bfseries Problem~\arabic{set}:}\\\refstepcounter{set}}
+\newcommand{\problemsub}{\refstepcounter{problem}{\vspace{2\baselineskip}\noindent\large \bfseries Problem~\arabic{set} \roman{problem}:}\\}
+\newcommand{\problemasub}{\refstepcounter{problem}{\vspace{2\baselineskip}\noindent\large \bfseries Problem~\arabic{set}\alph{problem}:}\\}
+\newcommand*\colvec[3][]{\begin{bmatrix}\ifx\relax#1\relax\else#1\\\fi#2\\#3\end{bmatrix}}
+
+\nocite{*}
+
+\title{PHYS 234 - A5}
+
+\author{Alexander Maguire \\ 
+amaguire@uwaterloo.ca \\
+20396195}
+\maketitle
+
+
+
+
+
+
+
+
+
+    
+    
+    
+    
+
+    \problemsub
+    \begin{align*}
+        P_{z+} &= \left|_z \Braket{+|}\right|^2 \\
+                  &= \frac{1}{6} \left|(1)(i+1) + 2()\right|^2 \\
+                  &= 0.333 \\ \\
+        P_{z-} &= 1 - P_{z+} \\
+                  &= 0.667
+    \end{align*}
+
+
+    
+    
+    
+    
+
+    \problemsub
+    \begin{align*}
+        P_{x+} &= \left|_x \Braket{+|}\right|^2 \\
+                  &= \frac{1}{6} \left|(0.707)(i+1) + 2(-0.707)\right|^2 \\
+                  &= 0.167 \\ \\
+        P_{x-} &= 1 - P_{x+} \\
+                  &= 0.833
+    \end{align*}
+
+\newpage
+    \problemsub
+    \begin{align*}
+        \Braket{S_z}_{\Ket{}} &= \Braket{|S_z|} \\
+                               &= 
+            \frac{\begin{bmatrix} 1 - i & 2 \end{bmatrix}}{\sqrt{6}}
+            \frac{\hbar}{2}
+            \begin{bmatrix}
+                1 & 0 \\
+                0 & -1
+            \end{bmatrix}
+            \frac{1}{\sqrt{6}}
+            \begin{bmatrix} 1 + i \\ 2 \end{bmatrix} \\
+                &= -0.167\hbar
+    \end{align*}
+
+
+    \problemsub
+    \begin{align*}
+        \Braket{S_x}_{\Ket{}} &= \Braket{|S_x|} \\
+                               &= 
+            \frac{\begin{bmatrix} 1 - i & 2 \end{bmatrix}}{\sqrt{6}}
+            \frac{\hbar}{2}
+            \begin{bmatrix}
+                0 & 1 \\
+                1 & 0
+            \end{bmatrix}
+            \frac{1}{\sqrt{6}}
+            \begin{bmatrix} 1 + i \\ 2 \end{bmatrix} \\
+                &= 0.333\hbar
+    \end{align*}
+
+
+
+\stepcounter{set}
+\problem
+\begin{align*}
+    \psi &= \sqrt{\frac{3}{5}} \Ket{+} + \sqrt{\frac{2}{5}} \Ket{-} \\ \\
+    \Braket{S_x}_{\psi} &= \Braket{\psi|S_x|\psi} \\
+                        &= \frac{1}{5}
+\begin{bmatrix} \sqrt{3} & \sqrt{2} \end{bmatrix}
+            \frac{\hbar}{2}
+            \begin{bmatrix}
+                0 & 1 \\
+                1 & 0 
+            \end{bmatrix}
+        \begin{bmatrix} \sqrt{3} \\ \sqrt{2} \end{bmatrix} \\
+            &= 0.98 \hbar
+\end{align*}
+
+
+
+
+
+
+
+
+\newpage
+\problem
+
+Given $20\% \Ket{-}_x$, $75\% \Ket{+}_y$, $5\% \Ket{+}_z$:
+
+\begin{align*}
+    \rho &= \sum_i p_i \Ket{\psi_i}\Bra{\psi_i} \\
+         &= 0.2 
+    \biggl( \Ket{-}_x 
+    {}_x\Bra{-} \biggr)
+ + 0.75 
+    \biggl( \Ket{+}_y 
+    {}_y\Bra{+} \biggr)
+ + 0.05 
+    \biggl( \Ket{+}_z 
+    {}_z\Bra{+} \biggr)
+ \\
+         &= 0.2 \mathbf{-S_x} + 0.75 \mathbf{S_y} + 0.05 \mathbf{S_z} \\
+         &= \frac{\hbar}{2} \begin{bmatrix}
+    0.005 & -0.2 + 0.75i \\
+    0.2 - 0.75i & -0.05
+\end{bmatrix} \\ \\
+    \Braket{\mathbf{S_y}\rho}_{\Ket{\psi}} &= \frac{\hbar^2}{4}Tr\biggl\{
+\begin{bmatrix}
+    0 & -i \\
+    i & 0
+\end{bmatrix}
+\begin{bmatrix}
+    0.005 & -0.2 + 0.75i \\
+    0.2 - 0.75i & -0.05
+\end{bmatrix}
+    \biggl\} \\
+    &= \frac{\hbar^2}{4} (0.75 + 0.2i + -0.75 -0.2i) \\
+    &= 0
+\end{align*}
+
+
+
+\problem
+\begin{align*}
+    \Ket{\pm}_x &= \frac{1}{\sqrt{2}} \left(\Ket{+} \pm \Ket{-}\right) \\ \\
+    \mathbf{S_x} \Ket{\pm}_x &= \pm\frac{\hbar}{2} \Ket{\pm}_x \\
+    \begin{bmatrix}
+        a & b \\
+        c & d
+    \end{bmatrix} \Ket{\pm}_x &= \pm\frac{\hbar}{2} \Ket{\pm}_x \\ \\
+        a\Ket{+} + b\Ket{-} &= +\frac{\hbar}{2} \left(\Ket{+} + \Ket{-}\right) \\ 
+        c\Ket{+} + d\Ket{-} &= -\frac{\hbar}{2} \left(\Ket{+} - \Ket{-}\right) \\ \\
+        \to 
+    \begin{bmatrix}
+        a & b \\
+        c & d
+    \end{bmatrix} &= 
+    \frac{\hbar}{2}
+    \begin{bmatrix}
+        1 & 1 \\
+        -1 & 1
+    \end{bmatrix}
+\end{align*}
+
+\end{document}

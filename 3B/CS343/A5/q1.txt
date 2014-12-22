@@ -1,0 +1,4 @@
+The angels in the video clip are in a deadlock, since they are holding
+pointers to one another and waiting to be signalled by the release of this
+pointer. No work is being done (since they are stone), and thus this is a
+deadlock.

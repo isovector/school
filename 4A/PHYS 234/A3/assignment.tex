@@ -1,0 +1,286 @@
+\documentclass[12pt]{article}
+
+\usepackage[margin=1in]{geometry}
+\usepackage{amsmath}
+\usepackage{amsfonts}
+\usepackage{braket, units, enumitem}
+
+\begin{document}
+
+\newcounter{set}
+\setcounter{set}{1}
+\newcounter{problem}[set]
+\newcommand{\problem}{{\vspace{2\baselineskip}\noindent\large \bfseries Problem~\arabic{set}:}\\\refstepcounter{set}}
+\newcommand{\problemsub}{\refstepcounter{problem}{\vspace{2\baselineskip}\noindent\large \bfseries Problem~\arabic{set} \roman{problem}:}\\}
+\newcommand{\problemasub}{\refstepcounter{problem}{\vspace{2\baselineskip}\noindent\large \bfseries Problem~\arabic{set}\alph{problem}:}\\}
+\newcommand*\colvec[3][]{\begin{pmatrix}\ifx\relax#1\relax\else#1\\\fi#2\\#3\end{pmatrix}}
+
+\nocite{*}
+
+\title{PHYS 234 - A3}
+
+\author{Alexander Maguire \\ 
+amaguire@uwaterloo.ca \\
+20396195}
+\maketitle
+
+
+
+
+
+
+
+
+
+
+
+    
+    
+    
+    
+    \problemsub
+    \begin{align*}
+    z &= -3+4i \\
+    \\
+    r &= ||z|| \\
+      &= 5 \\
+    \\
+    \theta &= \arctan\frac{\Im}{\Re}(z) \biggr \rvert_{z = -3+4i} \\
+           &= \unit[2.214]{rad} \\
+    \\
+    z &= 5 (\cos{2.214} + i\sin{2.214}) \\
+      &= 5 e^{2.214 i}
+    \end{align*}
+
+
+    
+    
+    
+    
+    \problemsub
+    \begin{align*}
+    z &= 7-1i \\
+    \\
+    r &= ||z|| \\
+      &= 7.07 \\
+    \\
+    \theta &= \arctan\frac{\Im}{\Re}(z) \biggr \rvert_{z = 7-1i} \\
+           &= \unit[-0.142]{rad} \\
+    \\
+    z &= 7.07 (\cos{-0.142} + i\sin{-0.142}) \\
+      &= 7.07 e^{-0.142 i}
+    \end{align*}
+
+
+    
+    
+    
+    
+    \problemsub
+    \begin{align*}
+    z &= -2-5i \\
+    \\
+    r &= ||z|| \\
+      &= 5.39 \\
+    \\
+    \theta &= \arctan\frac{\Im}{\Re}(z) \biggr \rvert_{z = -2-5i} \\
+           &= \unit[-1.951]{rad} \\
+    \\
+    z &= 5.39 (\cos{-1.951} + i\sin{-1.951}) \\
+      &= 5.39 e^{-1.951 i}
+    \end{align*}
+
+
+
+
+\stepcounter{set}
+
+    
+    
+    \problemsub
+    
+    \begin{align*}
+        r &= |3|^2 + |4|^2 \\
+            &= 5 \\
+        \\ 
+        \Ket{\psi_{1,norm}} &= \frac{\Ket{\psi_1}}{r^2} \\
+                             &= \frac{3}{5}\Ket{+} + \frac{4}{5}\Ket{-} \\
+        \\
+        P_z &= |\Braket{+|\psi_{1,norm}}|^2 \\
+            &= \left|\frac{3}{5}\right|^2 \\
+            &= 0.36 \\
+        \\
+        P_x &= \left|\frac{1}{\sqrt{2}}
+            (\Bra{+} + \Bra{-})\Ket{\psi_{1,norm}}\right|^2 \\
+            &= \left|\frac{1}{\sqrt{2}}
+            (\Braket{+|\psi_{1,norm}} + \Braket{-|\psi_{1,norm}})\right|^2 \\
+            &= \left|\frac{1}{\sqrt{2}} (3 + 4)\right|^2 \\
+            &= 0.98 \\
+        \\
+        P_y &= \left|\frac{1}{\sqrt{2}}
+            (\Bra{+} + i\Bra{-})\Ket{\psi_{1,norm}}\right|^2 \\
+            &= \left|\frac{1}{\sqrt{2}}
+            (\Braket{+|\psi_{1,norm}} + i\Braket{-|\psi_{1,norm}})\right|^2 \\
+            &= \left|\frac{1}{\sqrt{2}} (3 + i(4))\right|^2 \\
+            &= 0.5
+    \end{align*}
+
+
+    
+    
+    \problemsub
+    
+    \begin{align*}
+        r &= |1|^2 + |2i|^2 \\
+            &= 2.236 \\
+        \\ 
+        \Ket{\psi_{2,norm}} &= \frac{\Ket{\psi_2}}{r^2} \\
+                             &= \frac{1}{2.236}\Ket{+} + \frac{2i}{2.236}\Ket{-} \\
+        \\
+        P_z &= |\Braket{+|\psi_{2,norm}}|^2 \\
+            &= \left|\frac{1}{2.236}\right|^2 \\
+            &= 0.2 \\
+        \\
+        P_x &= \left|\frac{1}{\sqrt{2}}
+            (\Bra{+} + \Bra{-})\Ket{\psi_{2,norm}}\right|^2 \\
+            &= \left|\frac{1}{\sqrt{2}}
+            (\Braket{+|\psi_{2,norm}} + \Braket{-|\psi_{2,norm}})\right|^2 \\
+            &= \left|\frac{1}{\sqrt{2}} (1 + 2i)\right|^2 \\
+            &= 0.5 \\
+        \\
+        P_y &= \left|\frac{1}{\sqrt{2}}
+            (\Bra{+} + i\Bra{-})\Ket{\psi_{2,norm}}\right|^2 \\
+            &= \left|\frac{1}{\sqrt{2}}
+            (\Braket{+|\psi_{2,norm}} + i\Braket{-|\psi_{2,norm}})\right|^2 \\
+            &= \left|\frac{1}{\sqrt{2}} (1 + i(2i))\right|^2 \\
+            &= 0.9
+    \end{align*}
+
+
+    
+    
+    \problemsub
+    $$e^{i pi / 3} = \frac{1/ + i\sqrt{3}}{2}$$
+    \begin{align*}
+        r &= |3|^2 + |0.5+0.866i|^2 \\
+            &= 3.162 \\
+        \\ 
+        \Ket{\psi_{3,norm}} &= \frac{\Ket{\psi_3}}{r^2} \\
+                             &= \frac{3}{3.162}\Ket{+} + \frac{0.5+0.866i}{3.162}\Ket{-} \\
+        \\
+        P_z &= |\Braket{+|\psi_{3,norm}}|^2 \\
+            &= \left|\frac{3}{3.162}\right|^2 \\
+            &= 0.9 \\
+        \\
+        P_x &= \left|\frac{1}{\sqrt{2}}
+            (\Bra{+} + \Bra{-})\Ket{\psi_{3,norm}}\right|^2 \\
+            &= \left|\frac{1}{\sqrt{2}}
+            (\Braket{+|\psi_{3,norm}} + \Braket{-|\psi_{3,norm}})\right|^2 \\
+            &= \left|\frac{1}{\sqrt{2}} (3 + 0.5+0.866i)\right|^2 \\
+            &= 0.65 \\
+        \\
+        P_y &= \left|\frac{1}{\sqrt{2}}
+            (\Bra{+} + i\Bra{-})\Ket{\psi_{3,norm}}\right|^2 \\
+            &= \left|\frac{1}{\sqrt{2}}
+            (\Braket{+|\psi_{3,norm}} + i\Braket{-|\psi_{3,norm}})\right|^2 \\
+            &= \left|\frac{1}{\sqrt{2}} (3 + i(0.5+0.866i))\right|^2 \\
+            &= 0.76
+    \end{align*}
+
+
+
+\stepcounter{set}
+\problem
+
+\begin{align*}
+\Ket{\psi_1} &= \frac{1}{\sqrt{3}} \Ket{+} + i \frac{\sqrt{2}}{\sqrt{3}} \Ket{-} \\
+\Ket{\psi_2} &= \frac{1}{\sqrt{3}} \Ket{+} - i \frac{\sqrt{2}}{\sqrt{3}} \Ket{-} \\
+\Ket{\psi_3} &= -\frac{1}{\sqrt{3}} \Ket{+} - i \frac{\sqrt{2}}{\sqrt{3}} \Ket{-}
+\end{align*}
+
+\begin{center}
+\begin{tabular}{r | c c c}
+P & $\Ket{\phi_1}$ & $\Ket{\phi_2}$ & $\Ket{\phi_3}$ \\
+\hline \\
+$_z\Bra{+}$ & 
+    
+
+    
+    0.333
+ &
+    
+    0.333
+ &
+    
+    0.333
+
+ \\
+$_z\Bra{-}$ & 
+    
+
+    
+    0.667
+ &
+    
+    0.667
+ &
+    
+    0.667
+
+ \\
+$_x\Bra{+}$ & 
+    
+
+    
+    0.5
+ &
+    
+    0.5
+ &
+    
+    0.5
+
+ \\
+$_x\Bra{-}$ & 
+    
+
+    
+    0.5
+ &
+    
+    0.5
+ &
+    
+    0.5
+
+ \\
+$_y\Bra{+}$ & 
+    
+
+    
+    0.971
+ &
+    
+    0.029
+ &
+    
+    0.971
+
+ \\
+$_y\Bra{-}$ & 
+    
+
+    
+    0.029
+ &
+    
+    0.971
+ &
+    
+    0.029
+
+
+\end{tabular}
+\end{center}
+
+\end{document}

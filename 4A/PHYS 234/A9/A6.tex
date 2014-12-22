@@ -1,0 +1,145 @@
+\documentclass[12pt]{article}
+
+\usepackage[margin=1in]{geometry}
+\usepackage{amsmath,amssymb}
+\usepackage{amsfonts}
+\usepackage{braket, units, enumitem}
+
+\begin{document}
+
+\newcounter{set}
+\setcounter{set}{1}
+\newcounter{problem}[set]
+\newcommand{\problem}{{\vspace{2\baselineskip}\noindent\large \bfseries Problem~\arabic{set}:}\\\refstepcounter{set}}
+\newcommand{\problemsub}{\refstepcounter{problem}{\vspace{2\baselineskip}\noindent\large \bfseries Problem~\arabic{set} \roman{problem}:}\\}
+\newcommand{\problemasub}{\refstepcounter{problem}{\vspace{2\baselineskip}\noindent\large \bfseries Problem~\arabic{set} \alph{problem}:}\\}
+\newcommand*\colvec[3][]{\begin{bmatrix}\ifx\relax#1\relax\else#1\\\fi#2\\#3\end{bmatrix}}
+\newcommand{\Ketbra}[1]{\Ket{#1}\Bra{#1}}
+\newcommand{\Ketbrad}[2]{\Ket{#1}_{#2}{}_{#2}\Bra{#1}}
+\newcommand{\del}{\partial}
+\renewcommand{\d}{\mathrm{d}}
+
+\nocite{*}
+
+\title{PHYS 234 - A9}
+
+\author{Alexander Maguire \\ 
+amaguire@uwaterloo.ca \\
+20396195}
+\maketitle
+
+% % % % % % % % % % % % % % % % preamble
+
+% % 1
+\problemasub
+\begin{align*}
+\unit[4]{eV} &= E_{\psi_{I}} \\
+&= E_2 \\
+&= \frac{2\hbar^2\pi^2}{ma^2} \\
+ma^2 &= \frac{2\hbar^2\pi^2}{\unit[4]{eV}} \\
+&= \unit[3.43\times 10^{-48}]{kg\cdot m^2} \\
+\\
+E_{\psi_{II}} &= E_3 \\
+&= \frac{9\hbar^2\pi^2}{2ma^2} \\
+&= \unit[9]{eV}
+\end{align*}
+
+\problemasub
+\begin{align*}
+E_{min} &= E_1 \\
+&= \frac{\hbar^2\pi^2}{2ma^2} \\
+&= \unit[1]{eV}
+\end{align*}
+
+% % 2
+\newpage
+\stepcounter{set}
+\problem
+\begin{align*}
+\psi_n(x) &= A\sin\frac{n\pi x}{L} \\
+\\
+\int_{-\infty}^{\infty} \! \psi_1^*(x)\psi_3(x) \, \d x &= \int_{-\infty}^{\infty} \! \psi_1(x)\psi_3(x) \, \d x \\
+&= C\int_{0}^{\infty} \! \sin(y)\sin(3y) \, \d x \qquad y = \frac{\pi x}{L} \\
+&= C\int_{0}^{\infty} \! \cos(y+\pi/2)\cos(3y+\pi/2) \, \d x \\
+&= C\int_{0}^{\infty} \! \frac{\cos(4y+\pi)+\cos(2y)}{2} \, \d x \\
+&= C\int_{0}^{\infty} \! \cos(2y)-\cos(4y) \, \d x \\
+&= C\int_{0}^{\infty} \! \cos(2y) \, \d x - C\int_{0}^{\infty} \! \cos(4y) \, \d x \\
+\text{the integral over any hyperperiod of}& \\
+\text{these functions will be 0, and thus:}& \\
+&= 0
+\end{align*}
+
+
+
+
+% % 3
+\problemasub
+\begin{align*}
+\psi(x) &= \begin{cases}
+Nx(x-L) & 0 < x < L \\
+0 & \text{otherwise}
+\end{cases}\\
+\end{align*}
+\begin{align*}
+\int_{-\infty}^{\infty} \! \left(Nx(x-L)\right)^2 \, \d x &= 1 \\
+N^2\left( \frac{L^2x^3}{3} - \frac{Lx^4}{2} + \frac{x^5}{5} \right) \biggr |_0^L &= 1 \\
+\frac{L^5N^2}{30} &= 1 \\
+N &= \sqrt{\frac{30}{L^5}}
+\end{align*}
+
+\newpage
+\problemasub
+\begin{align*}
+\mathcal{P}(E_1) &= |\Braket{1|\psi}|^2 \\
+&= \left|\int_{-\infty}^{\infty}\! \phi_1^*(x) \psi(x) \, \d x\right|^2 \\
+&= \frac{2}{L} \left|\int_{0}^{L}\! \sin\frac{\pi x}{L} Nx(x -L) \, \d x\right|^2 \\
+&= \frac{2}{L} \left| - \frac{4L^3N}{\pi^3} \right|^2 \\
+&= \frac{2}{L} \left[ \frac{16L^6N^2}{\pi^6} \right] \\
+&= \frac{32L^5N^2}{\pi^6} \\
+&= \frac{960}{\pi^6} \\
+\end{align*}
+
+\problemasub
+\begin{align*}
+\Braket{\hat{H}} &= \Braket{\psi|\hat{H}|\psi} \\
+&= \int_{-\infty}^{\infty}\! \psi^*(x)\hat{H}\psi(x) \,\d x \\
+&= \int_{-\infty}^{\infty}\! \psi^*(x)\left[\frac{-\hbar^2}{2m}\frac{\d^2}{\d x^2} + \hat{V}\right]\psi(x) \,\d x \\
+&= \int_{0}^{L}\! x(x-L)\left[\frac{-\hbar^2}{2m}\frac{\d^2}{\d x^2} + 0\right] (Nx^2-NxL) \,\d x \\
+&= \frac{5\hbar}{m}\int_{0}^{L}\! x(x-L) \,\d x \\
+&= \frac{5\hbar}{L^2m} \\
+\end{align*}
+
+% % 4
+\newpage
+\stepcounter{set}
+\problem
+\begin{align*}
+\Psi(x,t) &= c_1\Psi_1(x,t) + c_2\Psi_2(x,t) \\
+\\
+1 &= \int_{-\infty}^{\infty} \! \Psi^2(x,t) \, \d x \\
+ &= \int_{-\infty}^{\infty} \! c_1^2\Psi_1^2(x,t) \, \d x + \int_{-\infty}^{\infty} \! c_2^2\Psi_2^2(x,t) \, \d x + \int_{-\infty}^{\infty} \! c_1c_2\Psi_1(x,t)\Psi_2(x,t) \, \d x \\ 
+ &= c_1^2\int_{-\infty}^{\infty} \! \Psi_1^2(x,t) \, \d x + c_2^2\int_{-\infty}^{\infty} \! \Psi_2^2(x,t) \, \d x + 0 \qquad \text{(by orthogonality)} \\
+ &= c_1^2 + c_2^2 \qquad\qquad\qquad\qquad\quad\qquad\qquad\text{(by normalization criterion)} \\
+ \\
+\therefore \quad c_1^2 + c_2^2 &= 1
+\end{align*}
+
+% % 5
+\problem
+\begin{align*}
+\mathcal{P}(E_n, 3L/4 < x < L) &= \int_{3L/4}^{L}\! \left|\phi_n(x)\right|^2 \,\d x \\
+&= \frac{2}{L} \int_{3L/4}^{L}\! \left|\sin\frac{n\pi x}{L}\right|^2\,\d x \\
+&= \frac{\pi n+2 \sin\left(\frac{3 \pi n}{2}\right)-2 \sin(2 \pi n)}{4 \pi n} \\
+\\
+\mathcal{P}(E_1) &= \frac{\pi +2 \sin\left(\frac{3 \pi}{2}\right)-2 \sin(2 \pi)}{4 \pi} \\
+&= \frac{\pi - 2}{4\pi} \\
+\\
+\mathcal{P}(E_2) &= \frac{2\pi +2 \sin\left(\frac{6 \pi}{2}\right)-2 \sin(4 \pi )}{8 \pi} \\
+&= \frac{1}{4} \\
+\\
+\mathcal{P}(E_3) &= \frac{3\pi +2 \sin\left(\frac{9 \pi}{2}\right)-2 \sin(6 \pi)}{12 \pi} \\
+&= \frac{2+3\pi}{12\pi}\\
+\end{align*}
+
+
+\end{document}

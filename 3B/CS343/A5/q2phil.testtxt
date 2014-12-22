@@ -1,0 +1,89 @@
+DINING PHILOSOPHERS TEST DOCUMENTATION
+======================================
+This program simulates the dining philosophers problem with various
+implementations of solving the issue.
+
+USER INTERFACE TESTING
+    There is no user interface to be tested, so the testing focuses
+    solely on the algorithm used for the conversion.
+
+ALGORITHM TESTING
+
+  TEST 1:
+  -------
+    The first test is to ensure no deadlocks can occur in extreme circumstances.
+
+    TESTING
+    Here is the script-fixed log of the testing performed with line numbers
+    attached.
+
+       1 Script started on 2013-11-19 18:00
+       2 sandy in ~/cs343/a5$ ./phil 50 500
+       
+            snip
+       
+     712 ***********************
+     713 Philosophers terminated
+     714 script done on 2013-11-19 18:00
+
+    ANALYSIS
+    The program successfully completes with 50 philosophers, and as such is unlikely
+    to deadlock with large numbers of philosophers.
+
+  TEST 2:
+  -------
+    The second test is to ensure no deadlocks occur with 2 philosophers.
+
+    TESTING
+    Here is the script-fixed log of the testing performed with line numbers
+    attached.
+
+       1 Script started on 2013-11-19 18:00
+       2 sandy in ~/cs343/a5$ ./phil 2
+       3 Phil0	Phil1	
+       4 ******	******	
+       5 H	    H	
+       6 E3,27	W1,0	
+       7 T	    E3,27	       
+       
+            snip
+       
+      44 ***********************
+      45 Philosophers terminated
+      46 script done on 2013-11-19 18:00
+
+    ANALYSIS
+    The program does not deadlock with 2 philosophers.
+
+  TEST 3:
+  -------
+    This test is to ensure that all implementations succeed given default parameters.
+
+          1 Script started on 2013-11-19 18:00
+          2 sandy in ~/cs343/a5$ make TYPE=INT && ./phil 5 30
+          3 echo "IMPLTYPE=INT" > ImplType
+                snip
+         11 u++	-g -Wall -Wno-unused-label -MMD -DTABLETYPE_INT q2main.o q2philosopher.o q2table.o q2printer.o -o phil
+         12 uC++ Version 6.0.0 (single processor) (debug) (no yield) (no verify) (no profile)
+                snip
+         29 Philosophers terminated
+         30 sandy in ~/cs343/a5$ make TYPE=INTB && ./phil 5 30
+                snip
+         42 uC++ Version 6.0.0 (single processor) (debug) (no yield) (no verify) (no profile)
+                snip
+         59 Philosophers terminated
+         60 sandy in ~/cs343/a5$ make TYPE=AUTO && ./phil 5 30
+                snip
+         72 uC++ Version 6.0.0 (single processor) (debug) (no yield) (no verify) (no profile)
+                snip
+         89 Philosophers terminated
+         90 sandy in ~/cs343/a5$ make TYPE=TASK && ./phil 5 30
+                snip
+        102 uC++ Version 6.0.0 (single processor) (debug) (no yield) (no verify) (no profile)
+                snip
+        119 Philosophers terminated
+        120 script done on 2013-11-19 18:11
+
+
+    ANALYSIS
+    Every implementation type successfuly compiles, and each, when run, successfully terminates.

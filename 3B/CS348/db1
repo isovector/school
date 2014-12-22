@@ -1,0 +1,149 @@
+SELECT student.snum, student.sname FROM student \
+INNER JOIN mark ON student.snum = mark.snum \
+WHERE mark.cnum = 'CS348' AND mark.grade >= 90 AND student.year = 4
+
+
+SELECT pnum, pname FROM professor WHERE pnum NOT IN ( \
+    SELECT pnum FROM class WHERE cnum IN ('CS348', 'CS234') \
+)
+
+
+SELECT DISTINCT fred.cnum, fred.term, fred.grade, professor.pnum, professor.pname \
+FROM ( \
+    SELECT m.* FROM mark m \
+    INNER JOIN ( \
+        SELECT cnum, term, MAX(grade) as maxGrade \
+        FROM mark \
+        GROUP BY cnum, term \
+    ) groupm \
+    ON m.cnum = groupm.cnum AND m.term = groupm.term AND m.grade = groupm.maxGrade \
+    INNER JOIN student \
+    ON student.snum = m.snum \
+    WHERE student.sname = 'Fred Smith' \
+) fred \
+INNER JOIN class \
+ON class.cnum = fred.cnum AND class.term = fred.term \
+INNER JOIN professor \
+ON professor.pnum = class.pnum
+
+
+SELECT student.snum, student.sname, student.year \
+FROM ( \
+    SELECT m.* FROM mark m \
+    INNER JOIN ( \
+        SELECT snum, MIN(grade) as minGrade \
+        FROM mark \
+        WHERE cnum LIKE 'CS%' \
+            OR cnum LIKE 'CO%' \
+        GROUP BY snum \
+    ) groupm \
+    ON m.snum = groupm.snum WHERE minGrade >= 90 \
+) keeners \
+INNER JOIN student ON student.snum = keeners.snum \
+WHERE student.year = 4
+
+
+SELECT DISTINCT * \
+FROM professor \
+WHERE pnum IN ( \
+    SELECT DISTINCT c1.pnum \
+    FROM schedule s1 \
+    INNER JOIN class c1 \
+    ON c1.cnum = s1.cnum AND c1.section = s1.section AND c1.term = s1.term \
+    INNER JOIN class c2 \
+    ON c1.pnum = c2.pnum \
+    INNER JOIN schedule s2 \
+    ON c2.cnum = s2.cnum AND c2.section = s2.section AND c2.term = s2.term \
+    WHERE (s1.day = 'Monday' AND s1.time < '12:00') \
+        AND (s2.day = 'Friday' AND s2.time > '12:00') \
+        AND s1.term = 'F2013' \
+) \
+ORDER BY professor.dept ASC, professor.pname ASC
+
+
+SELECT 100 * count / \
+    (SELECT COUNT(*) FROM student WHERE student.year = 4) \
+AS percentage \
+FROM \
+( \
+    SELECT COUNT(*) AS count \
+    FROM ( \
+        SELECT m.* FROM mark m \
+        INNER JOIN ( \
+            SELECT snum, MIN(grade) as minGrade \
+            FROM mark \
+            WHERE cnum LIKE '%3__' \
+            GROUP BY snum \
+        ) groupm \
+        ON m.snum = groupm.snum WHERE minGrade >= 80 \
+    ) keeners \
+    INNER JOIN student ON student.snum = keeners.snum \
+    WHERE student.year = 4 \
+)
+
+
+SELECT cnum, COUNT(*) AS count \
+FROM enrollment \
+INNER JOIN ( \
+    SELECT COUNT(*) AS count \
+    FROM enrollment \
+    GROUP BY cnum \
+    ORDER BY count ASC \
+    LIMIT 3 \
+) mins \
+ON mins.count = count \
+GROUP BY cnum
+
+
+SELECT p.pnum, p.pname, courses.* \
+FROM professor p \
+INNER JOIN ( \
+    SELECT c.pnum, c.cnum, c.section, c.term, COUNT(*) As count \
+    FROM student \
+    INNER JOIN enrollment e \
+    ON student.snum = e.snum \
+    INNER JOIN ( \
+        SELECT class.pnum, cnum, section, term  \
+        FROM class \
+        INNER JOIN professor \
+        ON professor.pnum = class.pnum \
+        WHERE professor.pnum IN ( \
+            SELECT pnum FROM professor \
+            WHERE dept = 'Computer Science' \
+        ) \
+    ) c \
+    ON e.cnum = c.cnum AND e.section = c.section AND e.term = c.term \
+    WHERE student.year IN (1, 2) \
+    GROUP BY c.cnum, c.section, c.term, c.pnum \
+) courses \
+ON p.pnum = courses.pnum \
+ORDER BY p.pname ASC, p.pnum ASC, courses.cnum ASC, courses.section ASC
+
+
+SELECT * FROM class
+
+
+SELECT 100 * count / \
+    (SELECT COUNT(DISTINCT dept) FROM professor ) \
+AS percentage \
+FROM ( \
+    SELECT COUNT(*) AS count \
+    FROM ( \
+        SELECT p.dept, 100 * shared.count / COUNT(*) AS percent \
+        FROM professor p \
+        INNER JOIN ( \
+            SELECT dept, COUNT(*) AS count \
+            FROM professor \
+            WHERE professor.office IN ( \
+                SELECT DISTINCT p1.office \
+                FROM professor p1 \
+                INNER JOIN professor p2 \
+                ON p1.office = p2.office AND p1.pnum != p2.pnum \
+            ) \
+            GROUP BY dept \
+        ) shared \
+        ON shared.dept = p.dept \
+        GROUP BY p.dept, shared.count \
+    ) \
+    WHERE percent > 50 \
+)

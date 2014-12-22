@@ -1,0 +1,107 @@
+#include <string>
+#include <iostream>
+#include <sstream>
+#include <assert.h>
+using namespace std;
+
+struct NodeChunk{
+    string *val;
+    NodeChunk *next;
+};
+
+struct Stack{
+    int chunkSize;
+    int topElt;
+    NodeChunk *firstChunk;
+};
+
+NodeChunk* createNewNodeChunk(int n) {
+    NodeChunk *chunk = new NodeChunk;
+    chunk->val = new string[n];
+    chunk->next = NULL;
+    return chunk;
+}
+
+void initStack(int chunkSize, Stack& s) {
+    assert(chunkSize >= 1);
+    s.chunkSize = chunkSize;
+    s.topElt = -1;
+    s.firstChunk = NULL;
+}
+
+bool isEmpty(Stack s) {
+    return s.firstChunk == NULL;
+}
+
+int size(const Stack& s) {
+    if (isEmpty(s)) return 0;
+
+    NodeChunk *node = s.firstChunk;
+    int count = 0;
+    while (node && node->next) {
+        node = node->next;
+        count += s.chunkSize;
+    }
+
+    return count + s.topElt + 1;
+}
+
+void push(string val, Stack& s) {
+    s.topElt++;
+    if (s.topElt == s.chunkSize || s.topElt == 0) {
+        NodeChunk *chunk = createNewNodeChunk(s.chunkSize);
+        chunk->val[0] = val;
+        chunk->next = s.firstChunk;
+        s.topElt = 0;
+        s.firstChunk = chunk;
+    } else s.firstChunk->val[s.topElt] = val;
+
+    //cout << size(s) << endl;
+}
+
+void pop(Stack& s) {
+    assert(!isEmpty(s));
+    if (s.topElt == 0) {
+        NodeChunk *top = s.firstChunk;
+        s.firstChunk = top->next;
+        s.topElt = s.chunkSize - 1;
+        delete[] top->val;
+        delete top;
+    } else s.firstChunk->val[s.topElt--] = "";
+
+    //cout << size(s) << endl;
+}
+
+string top(const Stack& s) {
+    assert(!isEmpty(s));
+    return s.firstChunk->val[s.topElt];
+}
+
+void swap(Stack& s) {
+    assert(size(s) > 1);
+    string first, second;
+    first  = top(s); pop(s);
+    second = top(s); pop(s);
+    push(first, s);
+    push(second, s);
+}
+
+
+int main() {
+    Stack s;
+    initStack(7, s);
+
+    for (int i = 0; i < 2; i++) {
+        push(itoa(i), s);
+        if (i > 5) swap(s);
+    }
+    swap(s);
+
+    
+    while (!isEmpty(s)) {
+        cout << top(s) << endl;
+        pop(s);
+    }
+	cout << isEmpty(s) << endl;
+    return 0;
+}

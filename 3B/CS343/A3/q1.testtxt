@@ -1,0 +1,98 @@
+WORD COUNT TEST DOCUMENTATION
+=============================
+The program creates a mapper for each file in a directory, which
+parses the input stream and passes the resulting tokens to a series
+of reducers which are responsible for counting the words.
+
+USER INTERFACE TESTING
+    There is no user interface to be tested, so the testing focuses
+    solely on the algorithm used for the conversion.
+
+ALGORITHM TESTING
+
+  TEST 1:
+  -------
+    DATA DESCRIPTION
+    The input file used (as put in its own directory "samples"), is
+    "data1.in".  The contents of the file, with each line numbered, are:
+
+         1  the quick brown fox jumps
+         2  over the lazy
+         3  dog.
+
+    It consists of seven unique words, and the word "the" repeated twice.
+
+    TESTING
+    Here is the script-fixed log of the testing performed with line numbers
+    attached.
+
+       1 Script started on Mon Oct 21 16:00:20 2013
+       2 $ ./wordcount samples
+       3 brown : 1
+       4 dog. : 1
+       5 lazy : 1
+       6 fox : 1
+       7 quick : 1
+       8 jumps : 1
+       9 over : 1
+      10 the : 2
+      11 Finished! Semaphore counter: 0
+
+    ANALYSIS
+    The results from running the program on "data1.in" show that:
+    There are seven unique words, and the word "the" has a value of 2.
+
+    From this we can say that the base case of the program has been
+    exercised, and the basic one-to-one algorithm has been shown to be correct.
+
+  TEST 2:
+  -------
+    DATA DESCRIPTION
+    "data2.in", is a copy of "data1.in" with the lines reverse, to see how 
+    the system deals with multiple mappers and reducers.
+
+   TESTING
+    Here is the script-fixed log of the testing performed with line numbers
+    attached.
+
+       1 Script started on Mon Oct 21 16:00:20 2013
+       2 $ tac samples/data1.in > samples/data2.in
+       3 $ ./wordcount samples 2
+       4 brown : 2
+       5 dog. : 2
+       6 lazy : 2
+       7 fox : 2
+       8 quick : 2
+       9 jumps : 2
+      10 over : 2
+      11 the : 4
+      12 Finished! Semaphore counter: 0
+
+    ANALYSIS
+    As expected, all word counts in this example are doubled from their previous
+    count.
+    
+  TEST 3:
+  -------
+    DATA DESCRIPTION
+    The data for test 3 is the same as test 2. Test 3 is concerned with checking
+    that the output of using a buffer-size > 0 is sorted.
+
+   TESTING
+    Here is the script-fixed log of the testing performed with line numbers
+    attached.
+
+       1 Script started on Mon Oct 21 16:00:20 2013
+       2 $ ./wordcount samples 2 3 1
+       3 brown : 2
+       4 dog. : 2
+       5 fox : 2
+       6 jumps : 2
+       7 lazy : 2
+       8 over : 2
+       9 quick : 2
+      10 the : 4
+      11 Finished! Semaphore counter: 0
+
+    ANALYSIS
+    As expected, the output of using the SortMapper and SortReducers is sorted.

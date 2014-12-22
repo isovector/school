@@ -1,0 +1,5 @@
+My algorithm for transforming resumption to fixup routines was to
+pass a functor representing the currently scoped fixup routine to
+each call of f() and g(). Furthermore, the fixup functors themselves
+took a reference to the currently scoped fixup routine (to deal
+with the case in which a resume is called from a resumption handler).
