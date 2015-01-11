@@ -1,0 +1,84 @@
+\documentclass[12pt]{article}
+
+\usepackage[margin=1in]{geometry}
+\usepackage{amsmath}
+\usepackage{amsfonts}
+\usepackage{braket, units, enumitem}
+\usepackage{todonotes}
+\usepackage[autostyle=false, style=english]{csquotes}
+\MakeOuterQuote{"}
+
+\begin{document}
+
+\renewcommand{\b}[1]{\textbf{#1}}
+\newcommand{\insight}[1]{\b{Insight:} \textit{#1}}
+\newcommand{\actionable}[1]{\todo{#1}}
+\newcommand{\defn}[2]{\\ \b{Definition '#1'}: #2}
+
+
+\nocite{*}
+
+\title{CS 444}
+
+\author{Alexander Maguire \\
+amaguire@uwaterloo.ca \\
+20396195}
+
+\maketitle
+
+\section{Administrata}
+Brad Lushman (bmlushma@uwaterloo.ca) \\
+DC 3110 \\
+\\
+\subsection{Grading}
+\begin{itemize}
+    \item Project - 75\%
+    \item \begin{itemize}
+            \item Marmoset tests - 60\% (of total)
+            \item Written report - 15\% (of total)
+    \end{itemize}
+    \item Final exam - 25\%
+\end{itemize}
+
+\actionable{Learn x86 assembly for code generation}
+
+The project is split into 5 assignments -- approximately 1 month for each.
+
+We may not use any tool whose output is code except for things that are provided and things we wrote ourselves.
+\actionable{Ask about scala parser combinators =(}
+
+
+
+\section{Introduction}
+\subsection{What is a compiler?}
+Find an isomorphic program in a different language.
+
+Phases:
+\begin{itemize}
+    \item scan
+    \item parse
+    \item weed
+    \item symbol table
+    \item name resolution
+    \item type checking
+    \item static analysis
+    \item -------backend begins------
+    \item intermediate form
+    \item optimize
+    \item code generation
+\end{itemize}
+
+Split into two phases -- frontend: the analysis; figuring out what the source program means. Backend: the synthesis;
+building target code.
+
+
+\subsection{Review of Formal Languages}
+LATEX IS SO STUPID
+\defn{alphabet}{A finite set of symbols $\Sigma$}
+\defn{word}{A finite sequence of words from $\Sigma$}
+\defn{language}{A set of words over $\Sigma$}
+\defn{Regular language}{Specified by a regular expression, and can be recognized by a DFA}
+
+
+
+\end{document}

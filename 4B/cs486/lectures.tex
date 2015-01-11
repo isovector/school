@@ -1,0 +1,86 @@
+\documentclass[12pt]{article}
+
+\usepackage[margin=1in]{geometry}
+\usepackage{amsmath}
+\usepackage{amsfonts}
+\usepackage{braket, units, enumitem}
+\usepackage{todonotes}
+
+\begin{document}
+
+\renewcommand{\b}[1]{\textbf{#1}}
+\newcommand{\insight}[1]{\b{Insight:} \textit{#1}}
+\newcommand{\actionable}[1]{\todo{#1}}
+
+
+\nocite{*}
+
+\title{CS 486}
+
+\author{Alexander Maguire \\
+amaguire@uwaterloo.ca \\
+20396195}
+
+\maketitle
+
+\section{Administration}
+John Doucette j3doucet@uwaterloo.ca \\
+\textbf{Office Hours:} Thursdays 10:15-11:15 DC 2580 \\
+http://www.cs.uwaterloo.ca/~klarson/teaching/W15-486
+
+\textbf{Required Text:} Russell, Norving - AI: A Modern Approach (3rd Edition) \\
+\textbf{Additional Text}: AI: Foundations of Computation Agents, Poole and Mackworth
+
+\subsection{Evaluation}
+6 Assignments: 60\% \\
+Final: 40\% \\
+Project (optional): up to 5\% (group of 3) \\
+\\
+Assignments will be accepted after 48h, but never afterwards. \\
+\\
+Daily quizzes, related to material. Work in pairs or trios. John says this is for pedagogical reasons and he seems to
+know what he's talking about, so that's pretty cool! \\
+\\
+\b{Do the assigned readings EVERY DAY before class. Expect 15 to 30 minutes.}
+
+
+
+
+\section{Introduction}
+\textit{Unlikely to be on the exam.}
+
+What is AI?
+
+Definitions differ along two axes:
+\begin{enumerate}
+    \item reason vs behavior
+    \item human vs rational
+\end{enumerate}
+
+Human-side: Turing test. yada yada yada. Straw vulcan. yada yada yada.
+
+\insight{Historically, humans have always thought the brain was like the most technologically advanced computation system they
+had available. Like a printing press, loom, or telephone exchange.}
+
+\actionable{Refresh basic statistics}
+
+
+
+\subsection{Rational Agents}
+By definition, anything that exists in an environment, with a body, sensors, actuators, and a logic unit.
+Properties of a task environment involve
+\begin{enumerate}
+    \item fully observable vs partially observable
+    \item deterministic vs stochastic
+    \item episodic (end condition) vs dynamic
+    \item discrete vs continuous
+    \item single vs multiple agents
+\end{enumerate}
+
+\subsection{State of the Art}
+\actionable{John did a project on translation.}
+BOOOORING
+
+
+
+\end{document}
