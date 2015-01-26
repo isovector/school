@@ -1,0 +1,54 @@
+\documentclass[12pt]{article}
+
+\usepackage[margin=1in]{geometry}
+\usepackage{amsmath}
+\usepackage{amsfonts}
+\usepackage{braket, units, enumitem}
+\usepackage{todonotes}
+
+\begin{document}
+
+\newcounter{set}
+\setcounter{set}{1}
+\newcounter{sub}
+\setcounter{sub}{1}
+\newcounter{problem}[set]
+\newcounter{problemi}[sub]
+\newcommand{\problem}{{\vspace{2\baselineskip}\noindent\large \bfseries Problem~\arabic{set}:}\\\refstepcounter{set}}
+\newcommand{\problemsub}{\setcounter{problemi}{0}\refstepcounter{problem}{\vspace{2\baselineskip}\noindent\large \bfseries Problem~\arabic{set} \roman{problem}:}\\}
+\newcommand{\problemasub}{\setcounter{problemi}{0}\refstepcounter{problem}{\vspace{2\baselineskip}\noindent\large \bfseries Problem~\arabic{set}\alph{problem}:}\\}
+\newcommand{\problemasubi}{\refstepcounter{problemi}{\vspace{2\baselineskip}\noindent\large \bfseries
+Problem~\arabic{set}\alph{problem} \roman{problemi}:\\}}
+
+
+\nocite{*}
+
+\title{CS 486 - A2}
+
+\author{Alexander Maguire \\
+amaguire@uwaterloo.ca \\
+20396195}
+
+\maketitle
+
+\problemasub
+Paths are expanded in the order:
+
+S F P Q R T G
+
+\problemasubi
+Yes, $h(\textit{state})$ is admissible since it never overestimates the cost of getting to $g$.
+
+\problemasubi
+S H K C A B D M G
+
+\problemasubi
+S H K C F P Q R T G
+
+               4+4a 5+3b
+               3+3c 6+2d
+1+5f 0+4s 1+3h 2+2k 7+1m 2e
+2+4p 3+3q 4+2r 5+1t 6+0g 1n
+
+
+\end{document}
