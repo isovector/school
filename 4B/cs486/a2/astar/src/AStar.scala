@@ -5,23 +5,23 @@ package object astar {
   // Solve is parameterized on the node type
   def solve[N](
       neighbors: N => Set[N], // function to get neighbors of a node
-      cost: (N, N) => Int,    // function to get the cost between two nodes (guaranteed to be neighbors)
-      heuristic: N => Int,    // function to estimate distance to goal
+      cost: (N, N) => Double,    // function to get the cost between two nodes
+      heuristic: N => Double,    // function to estimate distance to goal
       goal: N => Boolean,     // predicate to determine a goal
       start: N): Option[Seq[N]] = {
 
     var closed = Set[N]()
 
     // estimated total cost to goal
-    val estimatedCost = new HashMap[N, Int]()
+    val estimatedCost = new HashMap[N, Double]()
 
     // best distance to get to this node so far
-    val bestCost = new HashMap[N, Int]()
+    val bestCost = new HashMap[N, Double]()
 
     // Scala has weird priority queues; it requires an implicit Ordering[T]
     // to determine how to compare nodes. This creates one based on the
     // estimated total cost of a node.
-    def orderProvider(node: N): Int =
+    def orderProvider(node: N): Double =
       estimatedCost(node)
     implicit val nOrdering: Ordering[N]
       = Ordering.by(orderProvider).reverse
@@ -37,12 +37,7 @@ package object astar {
 
     // Manages inserting a node into the open list; modifying its priority if
     // necessary.
-    def insert(node: N, prio: Int) = {
-      // If the node is already in the queue, we need to remove it so we can
-      // change its priority.
-      if (open.count(predicate(node)) != 0)
-        open = open.filterNot(predicate(node))
-
+    def insert(node: N, prio: Double) = {
       estimatedCost(node) = prio
       open += node
     }
@@ -50,10 +45,16 @@ package object astar {
     bestCost(start) = 0
     insert(start, 0)
 
+    var popped = 0
+    var pushed = 0
     while (!open.isEmpty) {
       val node = open.dequeue()
-
       if (goal(node))
+        println("popped: " + node)
+      popped += 1
+
+      if (goal(node)) {
+        println(popped + "/" + pushed)
         return Some {
           // Retrace the path used to get to node `from`
           def backtrack(from: N): Seq[N] = {
@@ -65,6 +66,7 @@ package object astar {
 
           backtrack(node)
         }
+      }
 
       closed += node
       neighbors(node)
@@ -76,13 +78,20 @@ package object astar {
               || totalCost < estimatedCost(neighbor)) {
             cameFrom(neighbor) = node
             bestCost(neighbor) = totalCost
+            pushed += 1
 
-            insert(neighbor, totalCost + heuristic(neighbor))
+            val priority = totalCost + heuristic(neighbor)
+
+            if (goal(neighbor))
+              println("pushed: " + neighbor + " // " + priority)
+
+            insert(neighbor, priority)
           }
         }
     }
 
     // Failed to find a path to the goal
+    println("NO PATH")
     None
   }
 }
