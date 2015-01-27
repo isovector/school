@@ -106,11 +106,14 @@ object TSP {
         _.isGoal,
         Node(Seq(cities.head))
       ).get.last
+
+    println(solution)
   }
 }
 
 object Main {
   def main(args: Array[String]): Unit = {
+
     TSP(Source.stdin)
   }
 }

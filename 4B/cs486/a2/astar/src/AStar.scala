@@ -49,8 +49,6 @@ package object astar {
     var pushed = 0
     while (!open.isEmpty) {
       val node = open.dequeue()
-      if (goal(node))
-        println("popped: " + node)
       popped += 1
 
       if (goal(node)) {
@@ -81,10 +79,6 @@ package object astar {
             pushed += 1
 
             val priority = totalCost + heuristic(neighbor)
-
-            if (goal(neighbor))
-              println("pushed: " + neighbor + " // " + priority)
-
             insert(neighbor, priority)
           }
         }
