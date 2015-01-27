@@ -16,18 +16,24 @@ case class City(name: String, x: Int, y: Int) {
 object TSP {
   // Swap 2 elements in a list -- used to generate SA neighbors
   def swap2[T](list: Seq[T]): Seq[T] = {
-    val elems =
-      ( Random.nextInt(list.length - 1)
-      , Random.nextInt(list.length - 1))
+    val length = list.length
+    var elems =
+      Seq( Random.nextInt(length)
+      , Random.nextInt(length)
+      , Random.nextInt(length))
 
-    val (elem1pos, elem2pos) =
-      ( (math.min _).tupled(elems)
-      , (math.max _).tupled(elems))
+    if (elems.distinct.length < 3)
+      elems = Seq(0, length / 2, length - 1)
 
-    val result = collection.mutable.MutableList(list: _*)
-    result(elem1pos) = list(elem2pos)
-    result(elem2pos) = list(elem1pos)
-    result
+    val result = collection.mutable.MutableList[T]()
+    list.foreach { item =>
+      result += item
+    }
+
+    result(elems(0)) = list(elems(1))
+    result(elems(1)) = list(elems(2))
+    result(elems(2)) = list(elems(0))
+    result.toList
   }
 
   // Euclidean distance between any two cities
@@ -177,8 +183,8 @@ object TSP {
         _.saNeighbors,
         _.tourCost,
         Schedule(
-          12,
-          0.00001,
+          24,
+          0.001,
           0.93,
           250,
           true),
