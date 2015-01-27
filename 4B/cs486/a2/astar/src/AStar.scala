@@ -1,3 +1,5 @@
+package tsp
+
 import scala.collection.mutable.HashMap
 import scala.collection.mutable.PriorityQueue
 
@@ -5,8 +7,8 @@ package object astar {
   // Solve is parameterized on the node type
   def solve[N](
       neighbors: N => Set[N], // function to get neighbors of a node
-      cost: (N, N) => Double,    // function to get the cost between two nodes
-      heuristic: N => Double,    // function to estimate distance to goal
+      cost: (N, N) => Double, // function to get the cost between two nodes
+      heuristic: N => Double, // function to estimate distance to goal
       goal: N => Boolean,     // predicate to determine a goal
       start: N): Option[Seq[N]] = {
 
@@ -54,7 +56,7 @@ package object astar {
       if (goal(node)) {
         println(popped + "/" + pushed)
         return Some {
-          // Retrace the path used to get to node `from`
+          // Retrace the path used to get to node `from` recursively
           def backtrack(from: N): Seq[N] = {
             val before = cameFrom.get(from)
             if (before.isDefined)
@@ -72,8 +74,11 @@ package object astar {
         .foreach { neighbor =>
           val totalCost = bestCost(node) + cost(node, neighbor)
 
+          // If this node is not in the open list already, or the new cost is
+          // better...
           if (open.count(predicate(neighbor)) == 0
               || totalCost < estimatedCost(neighbor)) {
+            // Add this node to the priority queue
             cameFrom(neighbor) = node
             bestCost(neighbor) = totalCost
             pushed += 1
