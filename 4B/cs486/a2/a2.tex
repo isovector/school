@@ -42,7 +42,7 @@ amaguire@uwaterloo.ca \\
 \problemasub
 Paths are expanded in the order:
 
-S F P Q R T G
+S H K C A B D M E N G
 
 \problemasubi
 Yes, $h(\textit{state})$ is admissible since it never overestimates the cost of getting to $g$.
@@ -53,6 +53,7 @@ S H K C A B D M G
 \problemasubi
 S H K C F P Q R T G
 
+My tie-breaking strategy was to prefer nodes with a lower heuristic.
 
 
 
@@ -72,8 +73,13 @@ this, my heuristic would sometimes overestimate the total tour cost, resulting i
 My final heuristic was simply to use the MST of the unvisited cities; this worked well.
 
 \problemasub
-TODO: graph this
-TODO: talk about 36 problem
+\fig{astar.png}{Average neighbors expanded per number of cities}{0.5}
+The number of generated nodes for each city progressed roughly exponentially; after 10 cities, however, my search became
+too slow, so everything afterwards is extrapolated by multiplying the previous number of nodes by the new number of
+cities, since this is what is to be expected in the worst case.
+
+This extrapolation puts the number of generated nodes for 36 cities at a whopping 2.4536e+39. If every computer on Earth
+were running at 2.5GHz non-stop on this problem, it would take approximately 31 trillion years to complete.
 
 
 
@@ -103,6 +109,7 @@ And I found that (1) worked the best for small ($n < 5$) datasets, (2) for mediu
 for large($15 \leq n$) datasets. However, since (3) performed quite well on all datasets, I decided to use that as my
 chosen annealing schedule.
 
+\newpage
 \problemasub
 \fig{sa.png}{SA tour cost over time}{0.5}
 The best solution I found was ``AJQZXVPOADECACSUFGBAJHAGAERMAAAFTYIAIAHLDNABWK'', with tour cost 511.12.

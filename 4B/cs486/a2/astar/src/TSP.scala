@@ -14,22 +14,20 @@ case class City(name: String, x: Int, y: Int) {
 
 
 object TSP {
-  // Swap 2 elements in a list -- used to generate SA neighbors
-  def swap2[T](list: Seq[T]): Seq[T] = {
+  // Swap 3 elements in a list -- used to generate SA neighbors
+  def swap3[T](list: Seq[T]): Seq[T] = {
     val length = list.length
     var elems =
       Seq( Random.nextInt(length)
       , Random.nextInt(length)
       , Random.nextInt(length))
 
+    // If we picked two of the same index, use distinct ones instead
     if (elems.distinct.length < 3)
       elems = Seq(0, length / 2, length - 1)
 
-    val result = collection.mutable.MutableList[T]()
-    list.foreach { item =>
-      result += item
-    }
-
+    val result = collection.mutable.MutableList[T](last: _*)
+    // Swap the elements
     result(elems(0)) = list(elems(1))
     result(elems(1)) = list(elems(2))
     result(elems(2)) = list(elems(0))
@@ -177,8 +175,9 @@ object TSP {
 
 
     // ----- COMPUTE TSP -----
+    val solveWithSA = true
 
-    val solution =
+    if (solveWithSA) {
       SimulatedAnnealing[Node](
         _.saNeighbors,
         _.tourCost,
@@ -190,29 +189,25 @@ object TSP {
           true),
         Node(cities)
       )
+    } else { // Solve with A*
+      val solution =
+        solve[Node](
+          _.astarNeighbors.toSet,
+          _ costTo _,
+          _.heuristic,
+          _.isGoal,
+          Node(Seq(cities.head))
+        ).get.last
 
-    solution
-
-    /*
-    val solution =
-      solve[Node](
-        _.astarNeighbors.toSet,
-        _ costTo _,
-        _.heuristic,
-        _.isGoal,
-        Node(Seq(cities.head))
-      ).get.last
-
-    (solution.visited.map(_.name), solution.tourCost)*/
+      (solution.visited.map(_.name), solution.tourCost)
+    }
   }
 }
 
 object Main {
   def main(args: Array[String]): Unit = {
     println(
-      (1 to 1).map { _ =>
-        TSP(Source.fromFile("../randTSP/36/problem36"))
-      }.sortBy(_._2).head)
+        TSP(Source.fromFile("../randTSP/36/problem36")))
   }
 }
 
