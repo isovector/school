@@ -1,0 +1,116 @@
+\documentclass[12pt]{article}
+
+\usepackage[margin=1in]{geometry}
+\usepackage{amsmath, amssymb}
+\usepackage{amsfonts}
+\usepackage{braket, units, enumitem}
+\usepackage{todonotes}
+\usepackage{graphicx}
+\usepackage{mdframed}
+
+\newmdenv[
+  topline=false,
+  bottomline=false,
+  rightline=false,
+  skipabove=\topsep,
+  skipbelow=\topsep
+]{leftrule}
+
+\usepackage{tikz}
+\newcommand*\circled[1]{\tikz[baseline=(char.base)]{
+            \node[shape=circle,draw,inner sep=2pt] (char) {#1};}}
+\let\oldBC\because
+\renewcommand\because{\raisebox{0.75pt}{$\quad\oldBC\quad$}}
+
+\begin{document}
+
+\newcounter{set}
+\setcounter{set}{1}
+\newcounter{problem}[set]
+\newcommand{\problem}{{\vspace{2\baselineskip}\noindent\large \bfseries Problem~\arabic{set}:}\\\refstepcounter{set}}
+\newcommand{\problemsub}{\setcounter{problemi}{0}\refstepcounter{problem}{\vspace{2\baselineskip}\noindent\large \bfseries Problem~\arabic{set} \roman{problem}:}\\}
+\newcommand{\problemasub}{\setcounter{problemi}{0}\refstepcounter{problem}{\vspace{2\baselineskip}\noindent\large \bfseries Problem~\arabic{set}\alph{problem}:}\\}
+
+\title{CS 486 - A3}
+
+\author{Alexander Maguire \\
+amaguire@uwaterloo.ca \\
+20396195}
+
+\maketitle
+
+\problem
+
+\problem
+\newcommand\learn[2]{\textbf{From} \ensuremath{#1} $\to$ \textbf{Learn} \ensuremath{#2}}
+\newcommand\try[2]{\textbf{Try} \ensuremath{#1} \begin{leftrule}#2\end{leftrule}}
+\newcommand\cdict[1]{\textbf{Contradiction} \ensuremath{#1} $\to$ \textbf{Backtrack}}
+
+Given:
+\begin{alignat*}{2}
+    &\circled{1}: &S+S &= Y + 10 X_1 \\
+    &\circled{2}: &E+E+X_1 &= R + 10 X_2 \\
+    &\circled{3}: \quad&O+N+X_2 &= A + 10 X_3 \\
+    &\circled{4}: &R+O+X_3 &= N + 10 X_4 \\
+    &\circled{5}: &E+X_4 &= I + 10 X_5 \\
+    &\circled{6}: &Z+X_5 &= B \\
+\end{alignat*}
+
+\noindent
+
+\begin{enumerate}
+\item \learn{\circled{1}}{S \neq Y \neq 0}
+\item \learn{\circled{6}}{Z \neq B}
+\item \learn{Z \neq B \land \circled{6}}{X_5 = 1}
+\item \learn{\circled{5} \land X_5 = 1}{X_4 = 1} \because $E \leq 9$
+\item \learn{X_4 = 1 \land \circled{5}}{E = 9, I = 0}
+\item \learn{\circled{2}\big|_{E = 8} \land R \neq 9}{X_1 = 0, X_2 = 1, R = 8}
+\item \learn{\circled{1} \land X_1 = 0 \land Y \leq 8}{S \in \{1,2,3\}} \because $Y \neq 8$
+\item \learn{\circled{3}}{N \in \{1,2,3,4\}} \because $O \in \{N+2, N+3\} \land O \not\in \{8,9\}$
+\item \try{S=1} {
+    \begin{enumerate}
+    \item \learn{\text{9.}}{Y = 2}
+    \item \learn{\text{9.}}{N \in \{3, 4\}}
+    \item \try{N=3} {
+        \begin{enumerate}
+        \item \learn{\text{(c)}}{O \in \{5,6\}}
+        \item \try{O=5} { \cdict{\circled{3}} }
+        \item \try{O=6} { \cdict{\circled{3}} }
+        \item \cdict{O \not\in \{5,6\}}
+        \end{enumerate}
+    }
+    \item \try{N=4} {
+        \begin{enumerate}
+        \item \learn{\text{(d)}}{O \in \{6,7\}}
+        \item \try{O=6} { \cdict{\circled{3}} }
+        \item \try{O=7} { \cdict{\circled{3}} }
+        \item \cdict{O \not\in \{6,7\}}
+        \end{enumerate}
+    }
+    \end{enumerate}
+    \item \cdict{S \neq 1}
+}
+\item \try{S=2} {
+    \begin{enumerate}
+        \item \learn{\text{10.}}{Y = 4}
+        \item \learn{\text{10.}}{N \in \{1,3\}}
+        \item \try{N=1} {
+            \begin{enumerate}
+            \item \learn{\text{(c)}}{O = 3}
+            \item \learn{\circled{3}}{A = 5}
+            \item \learn{\circled{6}}{Z = 6, B = 7}
+            \item \textbf{Success!}
+            \end{enumerate}
+        }
+    \end{enumerate}
+}
+\end{enumerate}
+
+Final solution: $I = 0, N = 1, S = 2, O = 3, Y = 4, A = 5, Z = 6, B = 7, R = 8, E = 9$.
+
+
+
+
+
+
+\end{document}
