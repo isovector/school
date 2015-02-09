@@ -28,8 +28,8 @@
 \setcounter{set}{1}
 \newcounter{problem}[set]
 \newcommand{\problem}{{\vspace{2\baselineskip}\noindent\large \bfseries Problem~\arabic{set}:}\\\refstepcounter{set}}
-\newcommand{\problemsub}{\setcounter{problemi}{0}\refstepcounter{problem}{\vspace{2\baselineskip}\noindent\large \bfseries Problem~\arabic{set} \roman{problem}:}\\}
-\newcommand{\problemasub}{\setcounter{problemi}{0}\refstepcounter{problem}{\vspace{2\baselineskip}\noindent\large \bfseries Problem~\arabic{set}\alph{problem}:}\\}
+\newcommand{\problemsub}{\refstepcounter{problem}{\vspace{2\baselineskip}\noindent\large \bfseries Problem~\arabic{set} \roman{problem}:}\\}
+\newcommand{\problemasub}{\refstepcounter{problem}{\vspace{2\baselineskip}\noindent\large \bfseries Problem~\arabic{set}\alph{problem}:}\\}
 
 \title{CS 486 - A3}
 
@@ -107,6 +107,25 @@ Given:
 \end{enumerate}
 
 Final solution: $I = 0, N = 1, S = 2, O = 3, Y = 4, A = 5, Z = 6, B = 7, R = 8, E = 9$.
+
+
+\problemasub
+
+\problemasub
+
+\stepcounter{set}
+\problemsub
+
+Let $\textit{cell}_{ij}$ be the value of the cell in column $i$, row $j$, with domain $[0, 9)$.
+
+    The constraints for sudoku are thus the union of $\textit{Alldiff}$ of the following sets over all combinations of $i, j \in [0, 9)$:
+
+\begin{align*}
+    \textit{col}_i &= \bigcup_j \textit{cell}_{ij} \\
+    \textit{row}_j &= \bigcup_i \textit{cell}_{ij} \\
+    \textit{square}_{xy} &= \bigcup_{\substack{3x \leq i < 3x+3 \\ 3y \leq j < 3y+3}}{\textit{cell}_{ij}}
+\end{align*}
+
 
 
 
