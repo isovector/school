@@ -22,6 +22,13 @@
 \let\oldBC\because
 \renewcommand\because{\raisebox{0.75pt}{$\quad\oldBC\quad$}}
 
+\newcommand{\fig}[3]{
+    \begin{center}
+    \includegraphics[scale=#3]{#1} \\
+    #2 \\
+    \end{center}
+}
+
 \begin{document}
 
 \newcounter{set}
@@ -39,8 +46,11 @@ amaguire@uwaterloo.ca \\
 
 \maketitle
 
-\problem
+\problemsub
 
+\problemsub
+
+\stepcounter{set}
 \problem
 \newcommand\learn[2]{\textbf{From} \ensuremath{#1} $\to$ \textbf{Learn} \ensuremath{#2}}
 \newcommand\try[2]{\textbf{Try} \ensuremath{#1} \begin{leftrule}#2\end{leftrule}}
@@ -109,22 +119,40 @@ Given:
 Final solution: $I = 0, N = 1, S = 2, O = 3, Y = 4, A = 5, Z = 6, B = 7, R = 8, E = 9$.
 
 
-\problemasub
+\problemsub
 
-\problemasub
+\problemsub
 
 \stepcounter{set}
-\problemsub
+\problemasub
 
 Let $\textit{cell}_{ij}$ be the value of the cell in column $i$, row $j$, with domain $[0, 9)$.
 
-    The constraints for sudoku are thus the union of $\textit{Alldiff}$ of the following sets over all combinations of $i, j \in [0, 9)$:
+The constraints for sudoku are thus the union of $\textit{Alldiff}$ of the following sets over all combinations of
+$i, j \in [0, 9)$:
 
 \begin{align*}
-    \textit{col}_i &= \bigcup_j \textit{cell}_{ij} \\
-    \textit{row}_j &= \bigcup_i \textit{cell}_{ij} \\
-    \textit{square}_{xy} &= \bigcup_{\substack{3x \leq i < 3x+3 \\ 3y \leq j < 3y+3}}{\textit{cell}_{ij}}
+    \texttt{col}_i &= \bigcup_j \texttt{cell}_{ij} \\
+    \texttt{row}_j &= \bigcup_i \texttt{cell}_{ij} \\
+    \texttt{square}_{xy} &= \bigcup_{\substack{3x \leq i < 3x+3 \\ 3y \leq j < 3y+3}}{\texttt{cell}_{ij}}
 \end{align*}
+
+\problemasub
+
+The code for this problem is included in \texttt{Sudoku.scala}.
+
+\problemasub
+
+\textbf{Figure 1} plots the average cell assignments while solving a board of sudoku against the number of given cells.
+The results are pretty good -- in most cases the number of assignments is very close to the number of open cells.
+However, this number jumps up by an order of magnitude in the mid-20s, likely due to this being an equilibrium between
+being under- and over-constrained.
+
+Additionally, though it is not visible on the plot, problem \texttt{18/1.sd} took 15481 assignments. The solution was
+found quickly, but the assignment explicitly says not to include results over 10000 assignments. My assumption about the
+poor runtime of this test-case is that it happens to be quite antagonistic to my heuristic.
+
+\fig{sudokuplot.png}{\textbf{Figure 1:} Average cell assignments per number of given cells}{0.5}
 
 
 
