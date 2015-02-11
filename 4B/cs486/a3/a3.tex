@@ -8,6 +8,7 @@
 \usepackage{graphicx}
 \usepackage{mdframed}
 
+
 \newmdenv[
   topline=false,
   bottomline=false,
@@ -48,7 +49,15 @@ amaguire@uwaterloo.ca \\
 
 \problemsub
 
+An corollary of the minimax theorem (and indeed why $\alpha-\beta$ pruning works) is that \texttt{min} sets an
+upper-bound on \texttt{max}'s gains. By definition of suboptimal, any upper-bound set by a suboptimal \texttt{min} would
+thus necessarily be $\geq \sup{(\texttt{min}_{optimal})}$.
+
 \problemsub
+
+Likewise, \texttt{max} sets lower-bounds on its own gains. A suboptimal \texttt{max} would set lower lower-bounds, and
+thus still can't do any better than playing optimally, even against a suboptimal \texttt{min}.
+
 
 \stepcounter{set}
 \problem
@@ -121,7 +130,14 @@ Final solution: $I = 0, N = 1, S = 2, O = 3, Y = 4, A = 5, Z = 6, B = 7, R = 8, 
 
 \problemsub
 
+The arc from $N$ to $W$ is arc consistent, since $\forall n \in N.\quad \exists w \in W.\quad v(n,w)$: 1 = ``added'', 3
+=  ``blue'', 5 = ``stare''.
+
 \problemsub
+
+The arc from $W$ to $N$ is not arc consistent; ``fever`` does not have a vowel in the 1, 3 or 5 position. Restricting
+the domain to $W = \{added, blue, green, stare\}$ would make this arc arc consistent.
+
 
 \stepcounter{set}
 \problemasub
@@ -153,7 +169,6 @@ found quickly, but the assignment explicitly says not to include results over 10
 poor runtime of this test-case is that it happens to be quite antagonistic to my heuristic.
 
 \fig{sudokuplot.png}{\textbf{Figure 1:} Average cell assignments per number of given cells}{0.5}
-
 
 
 

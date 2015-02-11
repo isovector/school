@@ -45,7 +45,7 @@ class Sudoku(board: Map[Int,Int]) {
   }
 
   board.foreach { case (pos, value) =>
-    // Constrain the board by using the given values
+    // Constrain the board by using the starting values
     set(pos, value)
   }
 
@@ -63,8 +63,9 @@ class Sudoku(board: Map[Int,Int]) {
 
   // Try assigning pos to value
   def set(pos: Int, value: Int): Undoable = {
-    assignment(pos) = value
     numAssigns += 1
+
+    assignment(pos) = value
     Undoable(pos, value, satisfyConstraints(pos))
   }
 
@@ -93,7 +94,7 @@ class Sudoku(board: Map[Int,Int]) {
   }
 
   def solve(): Boolean = {
-    // We've assigned the entire board
+    // We've successfully assigned the entire board
     if (assignment.toSeq.length == 81)
       return true
 
@@ -127,9 +128,7 @@ class Sudoku(board: Map[Int,Int]) {
     }
   }
 
-  def print = {
-    println(getSolution.map(_.mkString(" ")).mkString("\n"))
-  }
+  def print = println(getSolution.map(_.mkString(" ")).mkString("\n"))
 }
 
 object Sudoku {
@@ -149,7 +148,7 @@ object Sudoku {
       (0 to 80).map { pos =>
         file(pos) match {
           case 0 => None            // nothing to do if it's 0
-          case i => Some(pos -> i)  // we care about it otherwise
+          case i => Some(pos -> i)  // we care about it otherwise -- add it as a starting value
         }
       } .flatten  // get rid of nones
         .toMap
@@ -161,16 +160,13 @@ object Sudoku {
   }
 
   def main(args: Array[String]): Unit = {
-    // Loop through the problems folder
-    new File("problems")
-      .listFiles
+    new File("problems")                          // Loop through the problems folder
+      .listFiles                                  // get each folder
       .toList
       .map { size =>
-        // Transform each into an (Int, Seq[Int])
-        size.getName.toInt ->
+        size.getName.toInt ->                     // Transform each problem size into an (Int, Seq[Int])
           size.listFiles.toList
-            // Solve each file
-            .map(x => solve(x.getCanonicalPath))
+            .map(x => solve(x.getCanonicalPath))  // Solve each file
       }
       .sortBy(_._1) // Sort by problem size
       .foreach { case (size, results) =>
