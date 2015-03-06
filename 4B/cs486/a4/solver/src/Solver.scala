@@ -117,6 +117,9 @@ package object dsl {
             // product them all with one another
             fi.reduceLeft((f1, f2) => product(f1, f2)),
             zj) // then sum out variable zj
+
+        gj.print
+
         // Add this new factor to the list
         F = F :+ gj
       }
@@ -148,12 +151,12 @@ object Entrance {
   import dsl._
 
   def main(args: Array[String]): Unit = {
-    val FS  = Var("fido sick")
-    val FH  = Var("fido howls")
-    val NH  = Var("neighbor howls")
-    val FM  = Var("full moon")
-    val NA  = Var("neighbor away")
-    val FBF = Var("fido bowl full")
+    val FS  = Var("FS")
+    val FH  = Var("FH")
+    val NH  = Var("NH")
+    val FM  = Var("FM")
+    val NA  = Var("NA")
+    val FBF = Var("FBF")
 
     // Create the CPT. This is where all our DSL magic above goes!
     val fido =
@@ -213,6 +216,8 @@ object Entrance {
       Seq(FBF, NA, NH, FM, FS)
     ).print
 
+    println("\n\n==========\n\n")
+
     // fido sick given that he's howling and it's the full moon
     inference(
       fido,
@@ -220,6 +225,7 @@ object Entrance {
       Set(FM, FH),
       Seq(FBF, NA, NH)
     ).print
+    println("\n\n==========\n\n")
 
     // ... and that he hasn't eaten
     inference(
@@ -228,6 +234,7 @@ object Entrance {
       Set(FM, FH, FBF),
       Seq(NA, NH)
     ).print
+    println("\n\n==========\n\n")
 
     // ... and that your neighbor is away
     inference(

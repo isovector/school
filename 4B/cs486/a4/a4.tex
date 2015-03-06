@@ -39,7 +39,7 @@
 \newcommand{\problemsub}{\refstepcounter{problem}{\vspace{2\baselineskip}\noindent\large \bfseries Problem~\arabic{set} \roman{problem}:}\\}
 \newcommand{\problemasub}{\refstepcounter{problem}{\vspace{2\baselineskip}\noindent\large \bfseries Problem~\arabic{set}\alph{problem}:}\\}
 
-\title{CS 486 - A3}
+\title{CS 486 - A4}
 
 \author{Alexander Maguire \\
 amaguire@uwaterloo.ca \\
@@ -47,132 +47,163 @@ amaguire@uwaterloo.ca \\
 
 \maketitle
 
-\problemsub
+\problemasub
 
-An corollary of the minimax theorem (and indeed why $\alpha-\beta$ pruning works) is that \texttt{min} sets an
-upper-bound on \texttt{max}'s gains. By definition of suboptimal, any upper-bound set by a suboptimal \texttt{min} would
-thus necessarily be $\geq \sup{(\texttt{min}_{optimal})}$.
+\problemasub
 
-\problemsub
+\problemasub
 
-Likewise, \texttt{max} sets lower-bounds on its own gains. A suboptimal \texttt{max} would set lower lower-bounds, and
-thus still can't do any better than playing optimally, even against a suboptimal \texttt{min}.
+\problemasub
+
+\problemasub
+
+\problemasub
+
+\problemasub
+
+\problemasub
+
+\problemasub
+
+\problemasub
+
+\problemasub
+
+\problemasub
+
+\problemasub
+
+\problemasub
+
+\problemasub
 
 
 \stepcounter{set}
 \problem
-\newcommand\learn[2]{\textbf{From} \ensuremath{#1} $\to$ \textbf{Learn} \ensuremath{#2}}
-\newcommand\try[2]{\textbf{Try} \ensuremath{#1} \begin{leftrule}#2\end{leftrule}}
-\newcommand\cdict[1]{\textbf{Contradiction} \ensuremath{#1} $\to$ \textbf{Backtrack}}
 
-Given:
-\begin{alignat*}{2}
-    &\circled{1}: &S+S &= Y + 10 X_1 \\
-    &\circled{2}: &E+E+X_1 &= R + 10 X_2 \\
-    &\circled{3}: \quad&O+N+X_2 &= A + 10 X_3 \\
-    &\circled{4}: &R+O+X_3 &= N + 10 X_4 \\
-    &\circled{5}: &E+X_4 &= I + 10 X_5 \\
-    &\circled{6}: &Z+X_5 &= B \\
-\end{alignat*}
-
-\noindent
-
-\begin{enumerate}
-\item \learn{\circled{1}}{S \neq Y \neq 0}
-\item \learn{\circled{6}}{Z \neq B}
-\item \learn{Z \neq B \land \circled{6}}{X_5 = 1}
-\item \learn{\circled{5} \land X_5 = 1}{X_4 = 1} \because $E \leq 9$
-\item \learn{X_4 = 1 \land \circled{5}}{E = 9, I = 0}
-\item \learn{\circled{2}\big|_{E = 8} \land R \neq 9}{X_1 = 0, X_2 = 1, R = 8}
-\item \learn{\circled{1} \land X_1 = 0 \land Y \leq 8}{S \in \{1,2,3\}} \because $Y \neq 8$
-\item \learn{\circled{3}}{N \in \{1,2,3,4\}} \because $O \in \{N+2, N+3\} \land O \not\in \{8,9\}$
-\item \try{S=1} {
-    \begin{enumerate}
-    \item \learn{\text{9.}}{Y = 2}
-    \item \learn{\text{9.}}{N \in \{3, 4\}}
-    \item \try{N=3} {
-        \begin{enumerate}
-        \item \learn{\text{(c)}}{O \in \{5,6\}}
-        \item \try{O=5} { \cdict{\circled{3}} }
-        \item \try{O=6} { \cdict{\circled{3}} }
-        \item \cdict{O \not\in \{5,6\}}
-        \end{enumerate}
-    }
-    \item \try{N=4} {
-        \begin{enumerate}
-        \item \learn{\text{(d)}}{O \in \{6,7\}}
-        \item \try{O=6} { \cdict{\circled{3}} }
-        \item \try{O=7} { \cdict{\circled{3}} }
-        \item \cdict{O \not\in \{6,7\}}
-        \end{enumerate}
-    }
-    \end{enumerate}
-    \item \cdict{S \neq 1}
-}
-\item \try{S=2} {
-    \begin{enumerate}
-        \item \learn{\text{10.}}{Y = 4}
-        \item \learn{\text{10.}}{N \in \{1,3\}}
-        \item \try{N=1} {
-            \begin{enumerate}
-            \item \learn{\text{(c)}}{O = 3}
-            \item \learn{\circled{3}}{A = 5}
-            \item \learn{\circled{6}}{Z = 6, B = 7}
-            \item \textbf{Success!}
-            \end{enumerate}
-        }
-    \end{enumerate}
-}
-\end{enumerate}
-
-Final solution: $I = 0, N = 1, S = 2, O = 3, Y = 4, A = 5, Z = 6, B = 7, R = 8, E = 9$.
 
 
 \problemsub
 
-The arc from $N$ to $W$ is arc consistent, since $\forall n \in N.\quad \exists w \in W.\quad v(n,w)$: 1 = ``added'', 3
-=  ``blue'', 5 = ``stare''.
-
 \problemsub
-
-The arc from $W$ to $N$ is not arc consistent; ``fever`` does not have a vowel in the 1, 3 or 5 position. Restricting
-the domain to $W = \{added, blue, green, stare\}$ would make this arc arc consistent.
-
-
-\stepcounter{set}
-\problemasub
-
-Let $\textit{cell}_{ij}$ be the value of the cell in column $i$, row $j$, with domain $[0, 9)$.
-
-The constraints for sudoku are thus the union of $\textit{Alldiff}$ of the following sets over all combinations of
-$i, j \in [0, 9)$:
-
 \begin{align*}
-    \texttt{col}_i &= \bigcup_j \texttt{cell}_{ij} \\
-    \texttt{row}_j &= \bigcup_i \texttt{cell}_{ij} \\
-    \texttt{square}_{xy} &= \bigcup_{\substack{3x \leq i < 3x+3 \\ 3y \leq j < 3y+3}}{\texttt{cell}_{ij}}
+FS &= 1.0 \\
+¬FS &= 1.0 \\
 \end{align*}
 
-\problemasub
+\begin{align*}
+FM, NH &= 0.52 \\
+FM, ¬NH &= 0.48 \\
+¬FM, NH &= 0.15 \\
+¬FM, ¬NH &= 0.85 \\
+\end{align*}
 
-The code for this problem is included in \texttt{Sudoku.scala}.
+\begin{align*}
+FS, FM, FH &= 0.9468 \\
+FS, FM, ¬FH &= 0.0532 \\
+FS, ¬FM, FH &= 0.5375 \\
+FS, ¬FM, ¬FH &= 0.4625 \\
+¬FS, FM, FH &= 0.53 \\
+¬FS, FM, ¬FH &= 0.47 \\
+¬FS, ¬FM, FH &= 0.03 \\
+¬FS, ¬FM, ¬FH &= 0.97 \\
+\end{align*}
 
-\problemasub
+\begin{align*}
+FS, FH &= 0.5521201607142856 \\
+FS, ¬FH &= 0.447884125 \\
+¬FS, FH &= 0.04785727142857143 \\
+¬FS, ¬FH &= 0.9521470142857142 \\
+\end{align*}
 
-\textbf{Figure 1} plots the average cell assignments while solving a board of sudoku against the number of given cells.
-The results are pretty good -- in most cases the number of assignments is very close to the number of open cells.
-However, this number jumps up by an order of magnitude in the mid-20s, likely due to this being an equilibrium between
-being under- and over-constrained.
+\begin{align*}
+FH &= 0.07307041589285714 \\
+¬FH &= 0.9269338698214284 \\
+\end{align*}
 
-Additionally, though it is not visible on the plot, problem \texttt{18/1.sd} took 15481 assignments. The solution was
-found quickly, but the assignment explicitly says not to include results over 10000 assignments. My assumption about the
-poor runtime of this test-case is that it happens to be quite antagonistic to my heuristic.
-
-\fig{sudokuplot.png}{\textbf{Figure 1:} Average cell assignments per number of given cells}{0.5}
+\begin{align*}
+FH &= 0.07307010273527399 \\
+\end{align*}
 
 
 
+\problemsub
+\begin{align*}
+FS &= 1.0 \\
+¬FS &= 1.0 \\
+\end{align*}
+
+\begin{align*}
+FM, NH &= 0.52 \\
+FM, ¬NH &= 0.48 \\
+¬FM, NH &= 0.15 \\
+¬FM, ¬NH &= 0.85 \\
+\end{align*}
+
+\begin{align*}
+FS, FM, FH &= 0.9468 \\
+FS, FM, ¬FH &= 0.0532 \\
+FS, ¬FM, FH &= 0.5375 \\
+FS, ¬FM, ¬FH &= 0.4625 \\
+¬FS, FM, FH &= 0.53 \\
+¬FS, FM, ¬FH &= 0.47 \\
+¬FS, ¬FM, FH &= 0.03 \\
+¬FS, ¬FM, ¬FH &= 0.97 \\
+\end{align*}
+
+\begin{align*}
+FS, FM, FH &= 0.08594147120761021 \\
+\end{align*}
 
 
+
+\problemsub
+\begin{align*}
+FM, NH &= 0.52 \\
+FM, ¬NH &= 0.48 \\
+¬FM, NH &= 0.15 \\
+¬FM, ¬NH &= 0.85 \\
+\end{align*}
+
+\begin{align*}
+FS, FM, FH &= 0.9468 \\
+FS, FM, ¬FH &= 0.0532 \\
+FS, ¬FM, FH &= 0.5375 \\
+FS, ¬FM, ¬FH &= 0.4625 \\
+¬FS, FM, FH &= 0.53 \\
+¬FS, FM, ¬FH &= 0.47 \\
+¬FS, ¬FM, FH &= 0.03 \\
+¬FS, ¬FM, ¬FH &= 0.97 \\
+\end{align*}
+
+\begin{align*}
+FS, FM, FBF, FH &= 0.3606673946720166 \\
+\end{align*}
+
+
+
+\problemsub
+\begin{align*}
+FM, FH, FS, NA &= 0.972 \\
+FM, FH, ¬FS, NA &= 0.6 \\
+FM, ¬FH, ¬NA, FS &= 0.064 \\
+FM, ¬FH, ¬FS, NA &= 0.4 \\
+FM, FH, ¬NA, FS &= 0.936 \\
+FM, ¬FH, FS, NA &= 0.028 \\
+FM, FH, ¬NA, ¬FS &= 0.5 \\
+FM, ¬FH, ¬NA, ¬FS &= 0.5 \\
+FH, ¬NA, FS, ¬FM &= 0.5 \\
+FH, FS, ¬FM, NA &= 0.625 \\
+FH, ¬FS, ¬FM, NA &= 0.1 \\
+FH, ¬NA, ¬FS, ¬FM &= 0.0 \\
+¬FH, ¬NA, FS, ¬FM &= 0.5 \\
+¬FH, ¬NA, ¬FS, ¬FM &= 1.0 \\
+¬FH, ¬FS, ¬FM, NA &= 0.9 \\
+¬FH, FS, ¬FM, NA &= 0.375 \\
+\end{align*}
+
+\begin{align*}
+FM, FH, FS, FBF, NA &= 0.33844011142061275 \\
+\end{align*}
 
 \end{document}
