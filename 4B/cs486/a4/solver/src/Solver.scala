@@ -58,6 +58,8 @@ package object dsl {
         u .toSeq
           .sortBy(_._1.size)
           .mkString("\n") + "\n-\n")
+
+    def ×(b: Factor) = product(u, b)
   }
   implicit def toRichFactor(u: Factor): RichFactor = RichFactor(u)
 
@@ -115,7 +117,7 @@ package object dsl {
         val gj =
           sum(
             // product them all with one another
-            fi.reduceLeft((f1, f2) => product(f1, f2)),
+            fi.reduceLeft(_ × _),
             zj) // then sum out variable zj
 
         gj.print
@@ -130,7 +132,7 @@ package object dsl {
 
     // take the product of all remaining factors
     val beforeRestrict =
-      F.reduceLeft((f1, f2) => product(f1, f2))
+      F.reduceLeft(_ × _)
 
     // restrict by the evidence
     val unnormalized =
