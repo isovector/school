@@ -32,23 +32,28 @@ attrCmp :: Attr -> (Float -> Bool) -> Example -> Bool
 attrCmp a f e = f $ getAttr a e
 
 gain :: ExData -> Attr -> Float
-{-gain ed a = fromIntegral a -- entropy p total - remainder-}
-    {-where entropy p' total' = log2 p' total' - log2 n' total'-}
-            {-where n' = total' - p'-}
+gain ed a = entropy p total - remainder
+  where p = length $ filter c12n ed
+        total = length $ ed
 
-          {-remainder = sum $ map rem' [0 .. length values - 1]-}
-          {-rem' i = (intDiv totali total) * entropy pi totali-}
-            {-where totali = length samples-}
-                  {-pi = length $ filter c12n samples-}
-                  {-v = values !! i-}
-                  {-samples = filter (attrCmp a (== v)) ed-}
+        entropy :: Int -> Int -> Float
+        entropy p total = (log2 p total) + log2 n total
+          where n = total - p
+                log2 :: Int -> Int -> Float
+                log2 0 _ = 0
+                log2 x total = -prec * logBase 2 prec
+                  where prec = intDiv x total
 
-          {-log2 x y = -frac * logBase 2.0 frac-}
-            {-where frac = fromIntegral x / fromIntegral y-}
-          {-p = length $ filter c12n ed-}
-          {-total = length ed-}
+        remainder = sum $ map rem [0 .. length values - 1]
+        values = nub $ map (getAttr a) ed
 
-          {-values = nub $ map (getAttr a) ed-}
+        rem :: Int -> Float
+        rem i = (intDiv totali total) - entropy pi totali
+          where v = values !! i
+                samples = filter (attrCmp a (== v)) ed
+                totali = length samples
+                pi = length $ filter c12n samples
+
 
 -- classification of an example
 c12n :: Example -> Bool
@@ -73,7 +78,7 @@ dtl ed@(ex:_) as
           subtree f = dtl (filter (attrCmp a $ f thresh) ed) as
           less = subtree (<=)
           more = subtree (>)
-          a = maximumBy (comparing $ gain ed) [0 .. length as]
+          a = minimumBy (comparing $ gain ed) [0 .. length as]
           thresh = median $ map (getAttr a) ed
 
 
@@ -83,7 +88,7 @@ main = do s <- readFile "test-train.txt"
           let ed = map (flip parseExample $ (== "colic.")) $ lines s
           let as = [0]
           print $ dtl ed as
-          -- putStrLn . unlines . map show $ map (gain ed) [0..15]
+          -- putStrLn . unlines . map show $ map (gain ed) [0..1]
           -- putStrLn . unlines $ map show ed
 
 

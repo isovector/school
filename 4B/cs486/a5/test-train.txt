@@ -1,2 +1,2 @@
-1.0,1.0,colic.
-5.0,5.0,healthy.
+2.0,3.0,colic.
+2.0,5.0,healthy.
