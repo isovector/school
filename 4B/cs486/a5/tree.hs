@@ -25,7 +25,7 @@ wordsWhen p s =  case dropWhile p s of
 
 -- what percentage of a list satisfy a predicate?
 percentageOf :: (a -> Bool) -> [a] -> Float
-percentageOf f xs = intDiv (length satisfying) (length xs)
+percentageOf f xs = intDiv (length satisfying) $ length xs
   where satisfying = filter f xs
 
 -- helper to do floating division on ints
@@ -114,13 +114,11 @@ gain ed a = entropy p total - remainder
                 log2 x t = -prec * logBase 2 prec
                   where prec = intDiv x t
 
-        remainder = sum $ map remi [0 .. length values - 1]
-        values = attrValues ed a
+        remainder = sum $ map remi $ attrValues ed a
 
-        remi :: Int -> Float -- remainder for an attribute index
-        remi i = (intDiv totali total) - entropy pi' totali
-          where v = values !! i
-                -- examples with this attribute value
+        remi :: Float -> Float -- remainder for an attribute index
+        remi v = intDiv totali total * entropy pi' totali
+          where -- examples with this attribute value
                 samples = filter (attrCmp a (== v)) ed
                 totali = length samples
                 pi' = length $ filter c12n samples
@@ -160,6 +158,24 @@ dtl ed@(ex:_) as
             where threshGain :: Float -> Float
                   threshGain v = gain (constrained (< v)) a + gain (constrained (> v)) a
 
+horseAttrs = [
+    "K",
+    "Na",
+    "CL",
+    "HCO3",
+    "Endotoxin",
+    "Aniongap",
+    "PLA2",
+    "SDH",
+    "GLDH",
+    "TPP",
+    "Breath rate",
+    "PCV",
+    "Pulse rate",
+    "Fibrinogen",
+    "Dimer",
+    "FibPerDim"
+    ]
 
 
 runTest :: String -> String -> IO Float
@@ -172,12 +188,16 @@ runTest f t = do putStrLn $ f ++ ":"
                      testData = strToExamples testFile c6yp
                      dt = dtl trainData $ attrsOf trainData
 
-                 print dt
+                 putStrLn . unlines $ map (\x -> (horseAttrs !! x) ++
+                   ": " ++ (show $ gain trainData x)) $ attrsOf trainData
+                 {-return 0.0-}
+
+                 {-print dt-}
                  return $ percentageOf (goodC6y dt) testData
 
-main = do test <- readFile "test-train.txt"
+nain = do test <- readFile "test-train.txt"
           let trainData = strToExamples test (== "good")
           print $ dtl trainData $ attrsOf trainData
 
-nain = do horse <- runTest "horse" "colic."
+main = do horse <- runTest "horse" "colic."
           print horse
