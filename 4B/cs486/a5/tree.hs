@@ -1,8 +1,10 @@
 {-# LANGUAGE ScopedTypeVariables #-}
 
-import Data.List (nub, group, sort, minimumBy, maximumBy)
+import Data.List (nub, group, sort, minimumBy, maximumBy, partition)
 import Debug.Trace (trace)
 import Data.Ord (comparing)
+import Control.Monad (join)
+import Control.Arrow ((***))
 
 
 --------------- datatypes
@@ -99,9 +101,12 @@ attrsOf ed = map fst $ filter ((>1) . snd) counts
 
 
 --------------- math
+attrPartition :: [Example] -> Attr -> Float -> ([Example],[Example])
+attrPartition ed a thresh = partition (attrCmp a (< thresh)) ed
+
 -- compute the information gain for a
-gain :: [Example] -> Attr -> Float
-gain ed a = entropy p total - remainder
+gain :: [Example] -> Attr -> Float -> Float
+gain ed a thresh = entropy p total - remainder
   where p = length $ filter c12n ed
         total = length $ ed
 
@@ -114,14 +119,13 @@ gain ed a = entropy p total - remainder
                 log2 x t = -prec * logBase 2 prec
                   where prec = intDiv x t
 
-        remainder = sum $ map remi $ attrValues ed a
-
-        remi :: Float -> Float -- remainder for an attribute index
-        remi v = intDiv totali total * entropy pi' totali
-          where -- examples with this attribute value
-                samples = filter (attrCmp a (== v)) ed
+        remi :: (Float -> Float -> Bool) -> Float
+        remi f = intDiv totali total * entropy pi' totali
+          where samples = filter (attrCmp a (f thresh)) ed
                 totali = length samples
                 pi' = length $ filter c12n samples
+
+        remainder = remi (<) + remi (>)
 
 
 ttrace :: Show a => a -> a
@@ -138,25 +142,15 @@ dtl ed@(ex:_) as
   -- the attributes are empty
   | as == []                       = Classification . mode $ map c12n ed
   | otherwise                      = Tree a thresh less more
-    where constrained :: (Float -> Bool) -> [Example]
-          constrained f = filter (attrCmp a f) ed
+    where subtree :: [Example] -> DecisionTree
+          subtree ed' = dtl ed' $ attrsOf ed'
+          (less, more) = join (***) subtree $ attrPartition ed a thresh
 
-          subtree :: (Float -> Float -> Bool) -> DecisionTree
-          -- compute a subtree given a function for comparing thresholds
-          subtree f = dtl ed' as'
-            where ed' = constrained $ flip f $ thresh
-                  as' = attrsOf ed'
-          less = subtree (<)
-          more = subtree (>)
+          bestAttrGain :: Attr -> Float
+          bestAttrGain a = maximumBy (comparing $ gain ed a) . between . attrValues ed $ a
 
-          -- get the best attribute in terms of information gain
-          a = minimumBy (comparing $ gain ed) as
-
-          -- possible threshold values
-          values = between $ attrValues ed a
-          thresh = maximumBy (comparing $ threshGain) $ values
-            where threshGain :: Float -> Float
-                  threshGain v = gain (constrained (< v)) a + gain (constrained (> v)) a
+          a = maximumBy (comparing bestAttrGain) as
+          thresh = ttrace $ bestAttrGain a
 
 horseAttrs = [
     "K",
@@ -188,11 +182,9 @@ runTest f t = do putStrLn $ f ++ ":"
                      testData = strToExamples testFile c6yp
                      dt = dtl trainData $ attrsOf trainData
 
-                 putStrLn . unlines $ map (\x -> (horseAttrs !! x) ++
-                   ": " ++ (show $ gain trainData x)) $ attrsOf trainData
                  {-return 0.0-}
 
-                 {-print dt-}
+                 putStrLn . unlines $ map (show . flip (gain trainData) 100) $ attrsOf trainData
                  return $ percentageOf (goodC6y dt) testData
 
 nain = do test <- readFile "test-train.txt"
