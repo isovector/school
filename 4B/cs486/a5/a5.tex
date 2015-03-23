@@ -7,8 +7,10 @@
 \usepackage{todonotes}
 \usepackage{graphicx}
 \usepackage{mdframed}
+\usepackage{tikz}
 \usepackage{tikz-cd}
 \usetikzlibrary{decorations.pathmorphing}
+\usetikzlibrary{matrix}
 
 
 \newmdenv[
@@ -41,7 +43,7 @@
 \newcommand{\problemsub}{\refstepcounter{problem}{\vspace{2\baselineskip}\noindent\large \bfseries Problem~\arabic{set} \roman{problem}:}\\}
 \newcommand{\problemasub}{\refstepcounter{problem}{\vspace{2\baselineskip}\noindent\large \bfseries Problem~\arabic{set}\alph{problem}:}\\}
 
-\title{CS 486 - A4}
+\title{CS 486 - A5}
 
 \author{Alexander Maguire \\
 amaguire@uwaterloo.ca \\
@@ -51,202 +53,74 @@ amaguire@uwaterloo.ca \\
 
 \maketitle
 
+\problemasub
+
+\problemasub
+
+\problemasub
+
+\problemasub
 
 \stepcounter{set}
-\stepcounter{set}
+\problem
 
+\begin{tabular}{cccc}
+    {}   & N      & C      & J      \\
+    N    & 73, 25 & 57, 42 & 66, 32 \\
+    C    & 80, 26 & 35, 12 & 32, 54 \\
+    J    & 28, 27 & 63, 31 & 54, 29 \\
+\end{tabular} \vspace{5mm} \\
+
+\begin{tabular}{cccc}
+    {}   & C      & J      \\
+    N    & 57, 42 & 66, 32 \\
+    C    & 35, 12 & 32, 54 \\
+    J    & 63, 31 & 54, 29 \\
+\end{tabular} \vspace{5mm}
+
+\begin{tabular}{cccc}
+    {}   & C      & J      \\
+    N    & 57, 42 & 66, 32 \\
+    J    & 63, 31 & 54, 29 \\
+\end{tabular} \vspace{5mm}
+
+\begin{tabular}{cccc}
+    {}   & C      \\
+    N    & 57, 42 \\
+    J    & 63, 31 \\
+\end{tabular} \vspace{5mm}
+
+\begin{tabular}{cccc}
+    {}   & C      \\
+    J    & 63, 31 \\
+\end{tabular} \vspace{5mm} \\
+
+This is a Nash equilibrium, because given $(J,C)$, player 1 can't do better by changing from $J$, and player 2 can't do
+better by changing from $C$.
 
 \problem
 
-$$\begin{tikzcd}
-    {} & \text{FM}\arrow{dd}{}\arrow{dr}{} & \text{NA}\arrow{d}{} \\
-    \text{FS}\arrow{dr}{}\arrow{d}{} & {} & \text{NH}\arrow{dl}{} \\
-    \text{FBF} & \text{FH} & {}
-\end{tikzcd}$$
-
-\begin{tabular}{|c|l|}
-\hline
-FS & 0.05 \\ \hline
-$\lnot$FS & 0.95 \\ \hline
-\end{tabular} \vspace{5mm}
-
-\begin{tabular}{|c|l|}
-\hline
-FM & 0.035714 \\ \hline
-$\lnot$FM & 0.96429 \\ \hline
-\end{tabular} \vspace{5mm}
-
-\begin{tabular}{|c|l|}
-\hline
-NA & 0.30 \\ \hline
-$\lnot$NA & 0.70 \\ \hline
-\end{tabular} \vspace{5mm}
-
-\begin{tabular}{|c|c|l|}
-\hline
-FBF &  FS & 0.60 \\ \hline
-FBF & $\lnot$FS & 0.10 \\ \hline
-$\lnot$FBF &  FS & 0.40 \\ \hline
-$\lnot$FBF & $\lnot$FS & 0.90 \\ \hline
-\end{tabular} \vspace{5mm}
-
-\begin{tabular}{|c|c|c|l|}
-\hline
-NH  &  FM &  NA & 0.80 \\ \hline
-NH  &  FM & $\lnot$NA & 0.40 \\ \hline
-NH  & $\lnot$FM &  NA & 0.50 \\ \hline
-NH  & $\lnot$FM & $\lnot$NA & 0.00 \\ \hline
-$\lnot$NH  &  FM &  NA & 0.20 \\ \hline
-$\lnot$NH  &  FM & $\lnot$NA & 0.60 \\ \hline
-$\lnot$NH  & $\lnot$FM &  NA & 0.50 \\ \hline
-$\lnot$NH  & $\lnot$FM & $\lnot$NA & 1.00 \\ \hline
-\end{tabular} \vspace{5mm}
-
-\begin{tabular}{|c|c|c|c|l|}
-\hline
-FH  &  FS &  NH &  FM & 0.99 \\ \hline
-FH  &  FS &  NH & $\lnot$FM & 0.75 \\ \hline
-FH  &  FS & $\lnot$NH &  FM & 0.90 \\ \hline
-FH  &  FS & $\lnot$NH & $\lnot$FM & 0.50 \\ \hline
-FH  & $\lnot$FS &  NH &  FM & 0.65 \\ \hline
-FH  & $\lnot$FS &  NH & $\lnot$FM & 0.20 \\ \hline
-FH  & $\lnot$FS & $\lnot$NH &  FM & 0.40 \\ \hline
-FH  & $\lnot$FS & $\lnot$NH & $\lnot$FM & 0.00 \\ \hline
-$\lnot$FH  &  FS &  NH &  FM & 0.01 \\ \hline
-$\lnot$FH  &  FS &  NH & $\lnot$FM & 0.25 \\ \hline
-$\lnot$FH  &  FS & $\lnot$NH &  FM & 0.10 \\ \hline
-$\lnot$FH  &  FS & $\lnot$NH & $\lnot$FM & 0.50 \\ \hline
-$\lnot$FH  & $\lnot$FS &  NH &  FM & 0.35 \\ \hline
-$\lnot$FH  & $\lnot$FS &  NH & $\lnot$FM & 0.80 \\ \hline
-$\lnot$FH  & $\lnot$FS & $\lnot$NH &  FM & 0.60 \\ \hline
-$\lnot$FH  & $\lnot$FS & $\lnot$NH & $\lnot$FM & 1.00 \\ \hline
-\end{tabular} \vspace{5mm}
-
+\problemsub
 
 \problemsub
-Because my project uses sets as an internal representation as factors, the order of terms in the factors below might not
-be in a consistent order. That being said, they \textit{are} grouped by factor. Each section is the evaluation of one
-$g_j$, and the final section is the requested probability.
-
-\begin{align*}
-FS &= 1.0 \\
-\lnot FS &= 1.0 \\
-\end{align*}
-
-\begin{align*}
-FM, NH &= 0.52 \\
-FM, \lnot NH &= 0.48 \\
-\lnot FM, NH &= 0.15 \\
-\lnot FM, \lnot NH &= 0.85 \\
-\end{align*}
-
-\begin{align*}
-FS, FM, FH &= 0.9468 \\
-FS, FM, \lnot FH &= 0.0532 \\
-FS, \lnot FM, FH &= 0.5375 \\
-FS, \lnot FM, \lnot FH &= 0.4625 \\
-\lnot FS, FM, FH &= 0.53 \\
-\lnot FS, FM, \lnot FH &= 0.47 \\
-\lnot FS, \lnot FM, FH &= 0.03 \\
-\lnot FS, \lnot FM, \lnot FH &= 0.97 \\
-\end{align*}
-
-\begin{align*}
-FS, FH &= 0.5521201607142856 \\
-FS, \lnot FH &= 0.447884125 \\
-\lnot FS, FH &= 0.04785727142857143 \\
-\lnot FS, \lnot FH &= 0.9521470142857142 \\
-\end{align*}
-
-\begin{align*}
-FH &= 0.07307041589285714 \\
-\lnot FH &= 0.9269338698214284 \\
-\end{align*}
-
-\begin{align*}
-FH &= 0.07307 \\
-\end{align*}
-
-
 
 \problemsub
-\begin{align*}
-FS &= 1.0 \\
-\lnot FS &= 1.0 \\
-\end{align*}
 
-\begin{align*}
-FM, NH &= 0.52 \\
-FM, \lnot NH &= 0.48 \\
-\lnot FM, NH &= 0.15 \\
-\lnot FM, \lnot NH &= 0.85 \\
-\end{align*}
-
-\begin{align*}
-FS, FM, FH &= 0.9468 \\
-FS, FM, \lnot FH &= 0.0532 \\
-FS, \lnot FM, FH &= 0.5375 \\
-FS, \lnot FM, \lnot FH &= 0.4625 \\
-\lnot FS, FM, FH &= 0.53 \\
-\lnot FS, FM, \lnot FH &= 0.47 \\
-\lnot FS, \lnot FM, FH &= 0.03 \\
-\lnot FS, \lnot FM, \lnot FH &= 0.97 \\
-\end{align*}
-
-\begin{align*}
-FS, FM, FH &= 0.08594 \\
-\end{align*}
-
-
-
-\newpage
 \problemsub
-\begin{align*}
-FM, NH &= 0.52 \\
-FM, \lnot NH &= 0.48 \\
-\lnot FM, NH &= 0.15 \\
-\lnot FM, \lnot NH &= 0.85 \\
-\end{align*}
 
-\begin{align*}
-FS, FM, FH &= 0.9468 \\
-FS, FM, \lnot FH &= 0.0532 \\
-FS, \lnot FM, FH &= 0.5375 \\
-FS, \lnot FM, \lnot FH &= 0.4625 \\
-\lnot FS, FM, FH &= 0.53 \\
-\lnot FS, FM, \lnot FH &= 0.47 \\
-\lnot FS, \lnot FM, FH &= 0.03 \\
-\lnot FS, \lnot FM, \lnot FH &= 0.97 \\
-\end{align*}
-
-\begin{align*}
-FS, FM, FBF, FH &= 0.36067 \\
-\end{align*}
-
-
-\newpage
 \problemsub
-\begin{align*}
-FM, FH, FS, NA &= 0.972 \\
-FM, FH, \lnot FS, NA &= 0.6 \\
-FM, \lnot FH, \lnot NA, FS &= 0.064 \\
-FM, \lnot FH, \lnot FS, NA &= 0.4 \\
-FM, FH, \lnot NA, FS &= 0.936 \\
-FM, \lnot FH, FS, NA &= 0.028 \\
-FM, FH, \lnot NA, \lnot FS &= 0.5 \\
-FM, \lnot FH, \lnot NA, \lnot FS &= 0.5 \\
-FH, \lnot NA, FS, \lnot FM &= 0.5 \\
-FH, FS, \lnot FM, NA &= 0.625 \\
-FH, \lnot FS, \lnot FM, NA &= 0.1 \\
-FH, \lnot NA, \lnot FS, \lnot FM &= 0.0 \\
-\lnot FH, \lnot NA, FS, \lnot FM &= 0.5 \\
-\lnot FH, \lnot NA, \lnot FS, \lnot FM &= 1.0 \\
-\lnot FH, \lnot FS, \lnot FM, NA &= 0.9 \\
-\lnot FH, FS, \lnot FM, NA &= 0.375 \\
-\end{align*}
 
-\begin{align*}
-FM, FH, FS, FBF, NA &= 0.33844 \\
-\end{align*}
+\problemsub
+
+\stepcounter{set}
+\problemsub
+
+\problemsub
+
+\problemsub
+
+\problemsub
+
+\problemsub
 
 \end{document}
