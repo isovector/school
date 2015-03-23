@@ -40,6 +40,11 @@ mode xs = head . maximumBy (comparing length) . group $ sort xs
 median :: Ord a => [a] -> a
 median xs = (sort xs) !! (div (length xs) 2)
 
+between :: [Float] -> [Float]
+between []           = []
+between (x:[])       = []
+between (x:xs@(y:_)) = (x + y) / 2 : (between xs)
+
 
 
 --------------- classifications
@@ -83,8 +88,13 @@ attrValues :: [Example] -> Int -> [Float]
 attrValues ed a = sort . nub $ map (getAttr a) ed
 
 -- get number of attributes for an example
-numAttrs :: Example -> Int
-numAttrs (Ex as _) = length as
+attrCount :: [Example] -> Int
+attrCount ((Ex as _):_) = length as
+
+attrsOf :: [Example] -> [Int]
+attrsOf ed = map fst $ filter ((>1) . snd) counts
+  where possible = [0 .. attrCount ed - 1]
+        counts = map (\x -> (x, length $ attrValues ed x)) possible
 
 
 
@@ -115,8 +125,9 @@ gain ed a = entropy p total - remainder
                 totali = length samples
                 pi' = length $ filter c12n samples
 
-epsilon = 0.0001
 
+ttrace :: Show a => a -> a
+ttrace a = trace (show a) a
 
 
 --------------- brass tacks
@@ -129,25 +140,44 @@ dtl ed@(ex:_) as
   -- the attributes are empty
   | as == []                       = Classification . mode $ map c12n ed
   | otherwise                      = Tree a thresh less more
-    where subtree :: (Float -> Float -> Bool) -> DecisionTree
+    where constrained :: (Float -> Bool) -> [Example]
+          constrained f = filter (attrCmp a f) ed
+
+          subtree :: (Float -> Float -> Bool) -> DecisionTree
           -- compute a subtree given a function for comparing thresholds
-          subtree f = dtl (filter (attrCmp a $ flip f $ thresh) ed) as
-          less = subtree (<=)
+          subtree f = dtl ed' as'
+            where ed' = constrained $ flip f $ thresh
+                  as' = attrsOf ed'
+          less = subtree (<)
           more = subtree (>)
+
           -- get the best attribute in terms of information gain
-          a = minimumBy (comparing $ gain ed) [0 .. length as - 1]
-          values = attrValues ed a
-          -- take the median - epsilon for the threshold
-          thresh = (median $ map (getAttr a) ed) - epsilon
+          a = minimumBy (comparing $ gain ed) as
+
+          -- possible threshold values
+          values = between $ attrValues ed a
+          thresh = maximumBy (comparing $ threshGain) $ values
+            where threshGain :: Float -> Float
+                  threshGain v = gain (constrained (< v)) a + gain (constrained (> v)) a
 
 
-main = do trainFile <- readFile "horse-train.txt"
-          testFile <- readFile "horse-test.txt"
 
-          let c6yp = (== "colic.") -- which samples are classified True
-              trainData = strToExamples trainFile c6yp
-              testData = strToExamples testFile c6yp
-              -- attributes existing in the examples
-              as = [0 .. (numAttrs $ trainData !! 0) - 1]
-              dt = dtl trainData as
-          print $ percentageOf (goodC6y dt) testData
+runTest :: String -> String -> IO Float
+runTest f t = do putStrLn $ f ++ ":"
+                 trainFile <- readFile (f ++ "-train.txt")
+                 testFile <- readFile (f ++ "-test.txt")
+
+                 let c6yp = (== t) -- which samples are classified True
+                     trainData = strToExamples trainFile c6yp
+                     testData = strToExamples testFile c6yp
+                     dt = dtl trainData $ attrsOf trainData
+
+                 print dt
+                 return $ percentageOf (goodC6y dt) testData
+
+main = do test <- readFile "test-train.txt"
+          let trainData = strToExamples test (== "good")
+          print $ dtl trainData $ attrsOf trainData
+
+nain = do horse <- runTest "horse" "colic."
+          print horse
