@@ -36,7 +36,8 @@ viterate as tm r u = map compute u
   where compute :: Utility -> Utility       -- get the new utility for a given position
         compute (p, _) = (p, r p + discount * max)
                                             -- max over actions of sum of neighbor state's expected utility
-          where max = maximum . map eUtil . as $ p
+          where max | as p /= [] = maximum . map eUtil . as $ p
+                    | otherwise  = 0
                 eUtil :: Action -> Float    -- expected utility of taking an action from here
                 eUtil a = let p' = go p a
                            in tm p p' a * utilOf u p'
@@ -48,6 +49,7 @@ world = [ ((1, 1), 0), ((1, 2), 0), ((1, 3), 0),
 
 -- given a position, see which actions we can take
 actionGen :: Pos -> [Action]
+actionGen (3, 1) = [ ]
 actionGen (x, y) = catMaybes [
     action (x > 1) ALeft,
     action (x < 3) ARight,
@@ -87,11 +89,13 @@ policy as u = map snd
                   | go p ARight == best = '→'
                   | go p ADown  == best = '↓'
                   | go p AUp    == best = '↑'
+                  | (-1, -1)    == best = 'x'
                     -- go in the direction of the maximum utility attained by
                     -- going in each action generated for this position
-                    where best = go p
-                               . maximumBy (comparing $ utilOf u . go p )
-                               $ as p
+                    where best | as p /= [] = go p
+                                            . maximumBy (comparing $ utilOf u . go p )
+                                            $ as p
+                               | otherwise  = (-1, -1)
 
 -- reward function
 reward :: Float -> Pos -> Float
@@ -101,7 +105,7 @@ reward _ _      = -1    -- otherwise -1
 
 -- put a newline into a string every 3 characters
 split3 :: String -> String
-split3 (x:y:z:xs) = [x,y,z,'\n'] ++ split3 xs
+split3 (x:y:z:xs) = [x,' ',y,' ',z,'\n'] ++ split3 xs
 split3 _          = []
 
 -- print a message without invoking the IO monad

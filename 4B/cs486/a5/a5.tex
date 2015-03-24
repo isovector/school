@@ -84,8 +84,9 @@ The code to generate this section is included as \texttt{policy.hs}. \\
     19 $\uparrow$ & 12 $\uparrow$ & 8 $\uparrow$
 \end{tabular}
 
-\newpage
 
+
+\newpage
 \stepcounter{set}
 \problem
 
@@ -123,7 +124,17 @@ The code to generate this section is included as \texttt{policy.hs}. \\
 This is a Nash equilibrium, because given $(J,C)$, player 1 can't do better by changing from $J$, and player 2 can't do
 better by changing from $C$.
 
+
+\newpage
 \problem
+
+Leave-one-out cross-validation is the process of partitioning your dataset of $n$ elements into a training set with
+$n-1$ elements and a testing set of with 1 element. The number of positive examples is the same as the number
+of negative examples in the original dataset.
+
+Without loss of generality, assume the sample taken for the testing dataset is classified positive, so its majority is
+positive. The training set now contains $n/2 - 1$ positive examples, and $n/2$ negative examples, so its majority is
+negative. Leave-one-out cross-validation will now always score zero by the construction of the training set.
 
 \problemsub
 
