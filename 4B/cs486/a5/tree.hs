@@ -1,15 +1,21 @@
 {-# LANGUAGE ScopedTypeVariables #-}
 
-import Data.List (nub, group, sort, minimumBy, maximumBy, partition)
+import Data.List (nub, group, sort, maximumBy, partition)
 import Debug.Trace (trace)
 import Data.Ord (comparing)
-import Control.Monad (join)
+import Control.Monad (join, ap)
 import Control.Arrow ((***))
+
+import Control.Applicative ((<$>), (<*>))
+import Control.Monad.State
+import Control.Monad.Writer
+
 
 
 --------------- datatypes
 data Example = Ex [Float] Bool deriving (Show, Eq, Read)
 type Attr = Int
+type StateWriter = StateT Int (Writer [String])
 
 data DecisionTree = Tree Attr Float DecisionTree DecisionTree
                   | Classification Bool
@@ -27,8 +33,7 @@ wordsWhen p s =  case dropWhile p s of
 
 -- what percentage of a list satisfy a predicate?
 percentageOf :: (a -> Bool) -> [a] -> Float
-percentageOf f xs = intDiv (length satisfying) $ length xs
-  where satisfying = filter f xs
+percentageOf f xs = intDiv (length $ filter f xs) $ length xs
 
 -- helper to do floating division on ints
 intDiv :: Int -> Int -> Float
@@ -52,10 +57,10 @@ between (x:xs@(y:_)) = (x + y) / 2 : (between xs)
 --------------- classifications
 -- classify an example
 c6y :: DecisionTree -> Example -> Bool
+c6y (Classification r) _        = r
 c6y (Tree a thresh less more) e = if getAttr a e <= thresh
                                      then c6y less e
                                      else c6y more e
-c6y (Classification r) _ = r
 
 -- is it a good classification?
 goodC6y :: DecisionTree -> Example -> Bool
@@ -119,77 +124,127 @@ gain ed a thresh = entropy p total - remainder
                 log2 x t = -prec * logBase 2 prec
                   where prec = intDiv x t
 
-        remi :: (Float -> Float -> Bool) -> Float
-        remi f = intDiv totali total * entropy pi' totali
-          where samples = filter (attrCmp a (f thresh)) ed
-                totali = length samples
-                pi' = length $ filter c12n samples
-
+        -- compute remainder for each half of the dataset
         remainder = remi (<) + remi (>)
 
+        remi :: (Float -> Float -> Bool) -> Float
+        remi f = intDiv total' total * entropy pi' total'
+          where samples = filter (attrCmp a (f thresh)) ed
+                total' = length samples
+                pi' = length $ filter c12n samples
 
-ttrace :: Show a => a -> a
-ttrace a = trace (show a) a
 
+-- given [x], get [(x, f x)]
+zipap :: (a -> b) -> [a] -> [(a, b)]
+zipap _ []     = []
+zipap f (x:xs) = (x, f x) : zipap f xs
 
 --------------- brass tacks
 -- build a decision tree
 dtl :: [Example] -> [Attr] -> DecisionTree
 dtl [] _                           = Classification False
 dtl ed@(ex:_) as
-  -- all the classifications are the same
+    -- all the classifications are the same
   | all (== c12n ex) $ map c12n ed = Classification $ c12n ex
-  -- the attributes are empty
+    -- the attributes are empty
   | as == []                       = Classification . mode $ map c12n ed
+    -- recursive step
   | otherwise                      = Tree a thresh less more
     where subtree :: [Example] -> DecisionTree
-          subtree ed' = dtl ed' $ attrsOf ed'
-          (less, more) = join (***) subtree $ attrPartition ed a thresh
+          subtree = ap dtl attrsOf
 
-          bestAttrGain :: Attr -> Float
-          bestAttrGain a = maximumBy (comparing $ gain ed a) . between . attrValues ed $ a
+          -- partition the remaining datapoints
+          -- into left and right trees
+          (less, more) = join (***) subtree
+                       $ attrPartition ed a thresh
 
-          a = maximumBy (comparing bestAttrGain) as
-          thresh = ttrace $ bestAttrGain a
+          -- get the best threshod for an attribute
+          bestThresh :: Attr -> Float
+          bestThresh a = maximumBy
+                            (comparing $ gain ed a) -- best gain
+                       . between                    -- get midpoints
+                       . attrValues ed              -- get unique values
+                       $ a
 
-horseAttrs = [
-    "K",
-    "Na",
-    "CL",
-    "HCO3",
-    "Endotoxin",
-    "Aniongap",
-    "PLA2",
-    "SDH",
-    "GLDH",
-    "TPP",
-    "Breath rate",
-    "PCV",
-    "Pulse rate",
-    "Fibrinogen",
-    "Dimer",
-    "FibPerDim"
-    ]
+          (a, thresh) = maximumBy (comparing (\(a', t) -> gain ed a' t))
+                        -- zip each attribute with its best threshold
+                      $ zipap bestThresh as
+
+-- pretty print a decision tree
+pretty :: [String] -> DecisionTree -> IO ()
+pretty names = pretty' 0
+  where pretty' :: Int -> DecisionTree -> IO ()
+        pretty' i (Classification r) = do putStrLn $ align i ++ "→ " ++ show r
+        pretty' i (Tree a t l m)     = do putStrLn $ align i ++ label names a t
+                                          pretty' (i + 1) l
+                                          pretty' (i + 1) m
+        align i = concat $ replicate i "|  "
+
+-- the label for a decision node
+label :: [String] -> Attr -> Threshold -> String
+label n a t = (n!! a) ++ " < " ++ show t
+
+-- user function for getting a dot file for the decision tree
+genDotRealsies :: [String]      -- names of attrs
+               -> DecisionTree
+               -> [String]
+genDotRealsies n dt = let w = runStateT (genDot n dt) 0         -- rip the writer out of the state
+                          p = runWriter w                       -- rip a pair out of the writer
+                          in ["digraph g {"] ++ snd p ++ ["}"]  -- put the necessary header and footer on
+
+genDot :: [String]                          -- attr names
+       -> DecisionTree                      -- dt to print
+       -> StateT Int (Writer [String]) ()   -- monad which keeps track of ids, and can output lines
+genDot n (Tree a t l r) = do genDot n l     -- generate left side
+                             lid <- get
+                             put $ lid + 1
+                             genDot n r     -- generate right side
+                             rid <- get
+                             let id' = rid + 1
+                             put id'
+                             let is = "A" ++ show id'
+                                 ls = "A" ++ show lid
+                                 rs = "A" ++ show rid
+                                 ts = show t
+                             tell $ [
+                                    is ++ " [label=\"" ++ (n !! a) ++ "\"];",
+                                    is ++ " -> " ++ ls ++ " [label=\"< " ++ ts ++ "\"]",
+                                    is ++ " -> " ++ rs ++ " [label=\"> " ++ ts ++ "\"]"
+                                    ]
+genDot n (Classification r) = do id' <- ("A" ++) . show <$> get
+                                 tell . return $ id' ++ " [label=\"" ++ show r ++ "\"];"
 
 
-runTest :: String -> String -> IO Float
-runTest f t = do putStrLn $ f ++ ":"
-                 trainFile <- readFile (f ++ "-train.txt")
-                 testFile <- readFile (f ++ "-test.txt")
+-- names for attributes for horse data set
+horseAttrs = [ "K", "Na", "CL", "HCO3", "Endotoxin", "Aniongap", "PLA2",
+             "SDH", "GLDH", "TPP", "Breath rate", "PCV", "Pulse rate",
+             "Fibrinogen", "Dimer", "FibPerDim" ]
 
-                 let c6yp = (== t) -- which samples are classified True
-                     trainData = strToExamples trainFile c6yp
-                     testData = strToExamples testFile c6yp
-                     dt = dtl trainData $ attrsOf trainData
+-- names for attributes for math data set
+mathAttrs = [ "School", "Sex", "Age", "Home", "FamSize", "Cohab", "MomEdu",
+            "DadEdu", "Primary", "ParentSex", "Travel", "Study", "Fails",
+            "ExtraEdu", "FamEdu", "EdtraPaid", "ExtraCuric", "Nursery",
+            "WantsEdu", "Internet", "Relationship", "FamQuality", "FreeTime",
+            "GoingOut", "AlcoSchool", "AlcoWeekend", "Health", "DaysMissed" ]
 
-                 {-return 0.0-}
+runTest :: Bool         -- want graphviz output?
+        -> String       -- dataset
+        -> String       -- value for success classifications
+        -> [String]     -- attr names
+        -> IO ()
+runTest g f t n = do trainFile <- readFile (f ++ "-train.txt")
+                     testFile <- readFile (f ++ "-test.txt")
+                     let c6yp = (== t) -- which samples are classified True
+                         trainData = strToExamples trainFile c6yp
+                         testData = strToExamples testFile c6yp
+                         dt = dtl trainData $ attrsOf trainData
+                     if g
+                        -- show graphviz output
+                        then putStrLn . unlines $ genDotRealsies n dt
+                        -- otherwise pretty print it and give the % classified
+                        else do pretty n dt
+                                print . length . filter (goodC6y dt) $ trainData
+                                print . length . filter (goodC6y dt) $ testData
 
-                 putStrLn . unlines $ map (show . flip (gain trainData) 100) $ attrsOf trainData
-                 return $ percentageOf (goodC6y dt) testData
+main = runTest False "horse" "colic." horseAttrs
 
-nain = do test <- readFile "test-train.txt"
-          let trainData = strToExamples test (== "good")
-          print $ dtl trainData $ attrsOf trainData
-
-main = do horse <- runTest "horse" "colic."
-          print horse

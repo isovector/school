@@ -124,7 +124,6 @@ The code to generate this section is included as \texttt{policy.hs}. \\
 This is a Nash equilibrium, because given $(J,C)$, player 1 can't do better by changing from $J$, and player 2 can't do
 better by changing from $C$.
 
-
 \newpage
 \problem
 
@@ -137,26 +136,46 @@ positive. The training set now contains $n/2 - 1$ positive examples, and $n/2$ n
 negative. Leave-one-out cross-validation will now always score zero by the construction of the training set.
 
 \problemsub
+The code for this section is attached as \\ \texttt{tree.hs}.
 
 \problemsub
+\begin{figure}[h!]
+  \caption{The decision tree for horses}
+  \centering
+    \includegraphics[width=0.5\textwidth]{horse-graph.png}
+\end{figure}
+
+\newpage
+\problemsub
+The algorithm classifies 132 examples of the training set correctly.
 
 \problemsub
+The algorithm classifies 13 examples of the training set correctly.
 
 \problemsub
-
-\problemsub
-
-\problemsub
+I use the information gain by trying every possible threshold value over all attributes, and selecting the one which
+provides the highest information gain.
 
 \stepcounter{set}
 \problemsub
+The code for this section is identical to question 4.
 
 \problemsub
+The generated decision tree is included in the appendix as Figure 2.
+\begin{figure*}
+  \caption{The decision tree for math}
+  \centering
+  \includegraphics[width=\textwidth]{math-graph.png}
+\end{figure*}
 
 \problemsub
+The algorithm classifies 249 examples of the training set correctly.
 
 \problemsub
+The algorithm classifies 84 examples of the testing set correctly.
 
 \problemsub
+There is a significant difference in the classification results between the training and testing sets. Presumably this
+is because the none of the provided features accurately track the classification, but instead are only sort of related.
 
 \end{document}

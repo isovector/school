@@ -1,0 +1,77 @@
+\documentclass[12pt]{article}
+
+\usepackage[margin=1in]{geometry}
+\usepackage{amsmath, amssymb}
+\usepackage{amsfonts}
+\usepackage{braket, units, enumitem}
+\usepackage{todonotes}
+
+\let\oldBC\because
+\renewcommand\because{\raisebox{0.75pt}{$\quad\oldBC\quad$}}
+
+\begin{document}
+
+\newcounter{set}
+\setcounter{set}{1}
+\newcounter{problem}[set]
+\newcommand{\problem}{{\vspace{2\baselineskip}\noindent\large \bfseries Problem~\arabic{set}:}\\\refstepcounter{set}}
+\newcommand{\problemsub}{\refstepcounter{problem}{\vspace{2\baselineskip}\noindent\large \bfseries \alph{problem}:}\\}
+\newcommand{\problemasub}{\refstepcounter{problem}{\vspace{2\baselineskip}\noindent\large \bfseries Problem~\arabic{set}\alph{problem}:}\\}
+
+\title{CS 486 - A6 \\ The Grand Challenge of Computer Go}
+
+\author{Alexander Maguire \\
+amaguire@uwaterloo.ca \\
+20396195}
+
+\setlength{\parindent}{0pt}
+\maketitle
+
+
+\problemsub % what is the motivation
+
+The motivation for this paper, The Grand Challenge of Computer Go, is twinfold: ostensibly it exists as an introduction
+to state-of-the-art methods for computers playing Go by providing algorithms which perform significantly better than
+naive approaches. However, additionally, Gelly et al. seem to be interested in Go artificial intelligence qua artificial
+intelligence itself; while they seem to be genuinely interested in improving the state-of-the-art of Go, they also
+soliloquize at surprisingly length on ``classic two-player games [as] excellent test beds for AI.''
+
+
+
+\problemsub % what is the proposed solution
+
+Gelly et al. identify the major stumbling blocks of traditional AI approaches to Go to be the huge branching factor of
+the game tree; that naive approaches would work \textit{in principle}, but the exponential growth of the tree makes it
+infeasible to do. Additionally, they claim that it is hard to make a utility function for go, and instead a policy-based
+approach is used. The solution they propose, is Monte-Carlo tree search (MCTS), which randomizes over game nodes and
+in the limit approximates the optimal solution. An exponentially difficult problem is thus reduced to parameter tuning
+of the algorithm in the expected case.
+
+
+
+\problemsub % what is the evaluation of b)
+
+The authors claim that this MCTS approach to Go makes significant improvement over previous solutions; older Go AIs were
+incapable of beating good amateur players, but contemporary AI approaches have now beaten professional players (albeit
+with a significant stone handicap).
+
+
+
+\problemsub % what are the contributions
+
+The Grand Challenge of Computer Go makes several contributions to the field of Go-related artificial intelligence. It
+introduces the aforementioned MCTS, as well as some extensions: RAVE, essentially a dynamic programming approach to
+subtree valuation; including both human priors as well as machine learned information to state valuation; and noting
+that the MCTS approach lends itself well to parallelization, unlike more naive approaches like minimax.
+
+
+
+\problemsub % what are the future directions
+
+It is explicitly stated in the paper that MCTS approaches have proved useful in other domains, such as the games of
+Amazons, Lines of Action, Hex, and Havannah (none of which were known \textit{a priori} to this author), and it is
+likely that given such a wide applicability MCTS will find applications in more games which have yet found themselves
+difficult to adapt to AI. Furthermore, while top-level chess AIs can reliably beat the best humans, this is not the case
+yet for Go. Further improvements to MCTS seem promising on this front as well.
+
+\end{document}
